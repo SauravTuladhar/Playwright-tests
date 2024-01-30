@@ -66,7 +66,7 @@ exports.LoginPage = class LoginPage {
 
     async verifyUserBlocked() {
         const blockedUserError = await this.page.locator(this.alertMessage);
-        await expect(blockedUserError).toHaveText('User blocked');
+        await expect(blockedUserError).toHaveText('Sorry, your user status is Blocked. Please contact the system administrator to reactivate your account.');
     }
 
     async verifyChangePasswordPopup() {

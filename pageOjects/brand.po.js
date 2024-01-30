@@ -14,7 +14,7 @@ exports.BrandPage = class BrandPage {
         this.brandContactPersonField = '//label[contains(text(),"Contact Person")]//following::Input[1]';
         this.brandContactNumberField = '//label[contains(text(),"Contact Number")]//following::Input[1]';
         this.brandPartnershipCodeField = '//label[contains(text(),"Partnership Code")]//following::Input[1]';
-        this.brandIsActive = '//label[contains(text(),"Is Active ?")]//following::div[1]';
+        this.brandIsActive = '//label[contains(text(),"Active")]//following::div[1]';
     }
 
     async brandSearch(brandSearch, brandSearchValidation) {
