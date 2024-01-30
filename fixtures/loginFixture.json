@@ -1,0 +1,25 @@
+{
+  "validUser": {
+    "userName": "boadmin@admin.com",
+    "password": "VT!@dmin123"
+  },
+  "invalidUser": {
+    "userName": "test@test.com",
+    "invalidEmail": "test@test",
+    "password": "testPassword",
+    "password>20Character": "TestPassword@123456789123456789"
+  },
+  "ExpiredPasswordUser": {
+    "userName": "saurav.tuladhar@8squarei.com",
+    "currentPassword": "TestPassword@1235",
+    "newPassword": "TestPassword@1236"
+  },
+  "blockedUser": {
+    "userName": "blocked_user@8squarei.com",
+    "password": "VT!@dmin123"
+  },
+  "forgorPasswordUser": {
+    "userName": "automation8squarei@gmail.com",
+    "password": "TestPassword@1235"
+  }
+}
