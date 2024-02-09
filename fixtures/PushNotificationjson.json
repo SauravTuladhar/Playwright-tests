@@ -1,0 +1,52 @@
+{
+    "AllCase": [
+      {
+        "AddPushNotification": {
+          "Title": "Hello title",
+          "Description": "Hello description",
+          "Body":"Hello Body",
+          "callforaction" :"Hello call for action"
+        }
+      },
+      {
+        "EditPushNotification": {
+          "Title": "Hello titles",
+          "Description": "Hello descriptions",
+          "Body":"Hello Bodys",
+          "callforaction" :"Hello call for actions",
+          "EditedText": "qq"
+        }
+      },
+      {
+        "DeletedPushNotification": {
+          "DeletedText": "aa"
+          
+        }
+      },
+      {
+        "ValidationMessage": {
+          "UserTypeValidation": "User Type is required",
+          "NotificationTypeValidation": "Notification Type is required",
+          "TitleValidation": "Title is required",
+          "BodyValidation": "Body is required",
+          "ActionTypeValidation": "Action Type is required"
+          
+          
+        }
+      },
+
+      {
+        "PopUpMessage": {
+          "Added": "Added successfully!",
+          "Edited": "Updated successfully!",
+          "Deleted": "Deleted successfully."
+          
+          
+        }
+      }
+
+
+
+
+    ]
+  }
