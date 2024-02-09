@@ -4,6 +4,7 @@ import { BrandPage } from '../../pageOjects/brand.po';
 const testData = require('../../fixtures/loginFixture.json');
 const brandTestData = require('../../fixtures/brandFixture.json');
 
+
 test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
     await page.goto('/');

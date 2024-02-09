@@ -1,0 +1,27 @@
+{
+    "Add": {
+        "ph": "6012102102",
+        "username": "swornima@grr.la",
+        "fullname":"Swornima Shrestha"
+
+    },
+
+    "Edit": {
+        "ph": "600111100",
+        "username": "swornimaedit@grr.la",
+        "fullname":"Swornima Edit Shrestha"
+    },
+
+    "List": {
+        "username": "swornima2@test.la"
+    },
+
+    "message":{
+        "AddSuccess":"Added successfully!",
+        "AddDuplicateUser":"Staff user is already registered with the provided phone number or username.",
+        "EditSuccess":"Updated successfully!",
+        "DeleteSuccess":"Deleted successfully."
+    }
+
+
+}
