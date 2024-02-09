@@ -196,6 +196,28 @@ async function createUser(userData, accessToken, { request }) {
     const statusCode = response.status();
     expect(statusCode).toBe(201);
     const responseBody = await response.json();
+
+}
+
+async function addCampaign(campaignData, accessToken, { request }) {
+    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/staff-user';
+ //   const apiUrl = await getApiBaseUrl();
+  //  console.log('API Base URL:', apiUrl + "/marketing/campaign/");
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.post("https://mmp2backenddev.vanillatech.asia/notification/manage/marketing/campaign", {
+        headers,
+        data: JSON.stringify(campaignData),
+    });
+
+    const statusCode = response.status();
+    expect(statusCode).toBe(201);
+    const responseBody = await response.json();
+    return responseBody.name;
+
 }
 
 async function getAllUsers({ request }, username) {
@@ -390,4 +412,4 @@ async function getApiBaseUrl() {
     return apiUrl;
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, addCampaign, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
