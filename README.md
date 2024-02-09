@@ -3,7 +3,7 @@
 For using this repo, use the following command.
 
 Git Clone:
-git clone git@github.com:Vanilla-Tech/MMP2.0-BO-Automation.git
+git clone git@github.com:vanilla-8s/MMP2-BO-Automation.git
 
 Open the cloned repository and open terminal in VSCode and enter the following command : <code> <b>npm i </b></code> </br></br>
 

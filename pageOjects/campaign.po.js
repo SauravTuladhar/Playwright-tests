@@ -65,17 +65,19 @@ exports.CampaignPage = class CampaignPage {
     }
 
     async campaignSearch(campaignSearch) {
+        await this.page.waitForTimeout(5000)
+        const table = await this.page.locator(this.campaignTable)
+        const rows = await table.locator(this.campaignRow)
+        const rowcount=await rows.count()
         await this.page.locator(this.campaignSearchField).fill(campaignSearch);
         await this.page.locator(this.campaignSearchButton).click();
+        return await rowcount
     }
 
     async verifySearch(campaignSearch) {
         const campaignSearchList = await this.page.locator(this.campaignSearchListValidation);
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
         await expect(this.page.locator(this.campaignSearchField)).toHaveValue(campaignSearch)
         await expect(campaignSearchList).toHaveText(campaignSearch);
-        return await rows.count();
     }
 
     async searchReset(){
@@ -83,11 +85,11 @@ exports.CampaignPage = class CampaignPage {
     }
 
     async verifyReset(beforeReset) {
+        await this.page.waitForTimeout(5000)
         const table = await this.page.locator(this.campaignTable)
         const rows = await table.locator(this.campaignRow)
         await expect(this.page.locator(this.campaignSearchField)).toHaveValue('');
-        await expect(await rows.count()).toBeGreaterThan(beforeReset);
-
+        await expect(await rows.count()).toBe(beforeReset);
     }
 
     async campaignView() {
@@ -142,14 +144,11 @@ exports.CampaignPage = class CampaignPage {
         const rows = await table.locator(this.campaignRow)
         const col = await table.locator(this.campaignColumn)
         let nameMatch = ''
-        console.log(await rows.count())
-        console.log(await col.count())
-
+    
         for (let i = 0; i < await rows.count(); i++) {
                 const row = await rows.nth(i);
                 const tds = row.locator('td');
                 nameMatch = await tds.nth(0).textContent();
-                console.log(nameMatch)
 
                 if (nameMatch == campaignName) {
                     break;
@@ -236,7 +235,6 @@ exports.CampaignPage = class CampaignPage {
         const successMessage = await this.page.locator(this.alert);
 
         await expect(successMessage).toContainText(campaigntestData.campaignedit.campaignUpdatedMessage)
-        console.log(successMessage)
     }
 
     async campaignDeletePage(campaignSearch) {

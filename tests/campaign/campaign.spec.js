@@ -3,7 +3,7 @@ const { test, expect } = require("@playwright/test");
 import { CampaignPage } from '../../pageOjects/campaign.po';
 const testData = require('../../fixtures/loginFixture.json');
 const campaigntestData = require('../../fixtures/campaignFixture.json');
-const { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, addCampaign, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport } = require('../../utils/helper.spec.js');
+const {authenticateUser, addCampaign } = require('../../utils/helper.spec.js');
 
 
 let accessToken, apiResponse, campaignName
@@ -70,6 +70,12 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignEditFields();
         await campaign.verifyEditSuccessMessage();
         await campaign.verifyCampaignList(campaigntestData.campaignedit.campaignName)
+        await campaign.campaignDeletePage(campaigntestData.campaignedit.campaignName);
+        await campaign.iscamapaignDeletePopup();
+        await campaign.campaignDelete();
+        await campaign.verifycampaignDeleteMessage();
+        await campaign.verifyCampaignListforDelete(campaigntestData.campaignedit.campaignName);
+    })
     })
 
     test('Campaign Delete and Verify List', async ({ page, request }) => {
@@ -105,16 +111,16 @@ test.describe('Campaign testcases', () => {
         const campaign = new CampaignPage(page);
         await campaign.campaignView();
         await campaign.isCampaignPage();
-        await campaign.campaignSearch("campaign")
-        await campaign.verifySearch("campaign")
+        await campaign.campaignSearch("Test Sunita 01")
+        await campaign.verifySearch("Test Sunita 01")
     })
 
     test('Campaign Reset', async ({ page }) => {
         const campaign = new CampaignPage(page);
         await campaign.campaignView();
         await campaign.isCampaignPage();
-        await campaign.campaignSearch("campaign");
-        const row_count=  await campaign.verifySearch("campaign")
+        const row_count= await campaign.campaignSearch("Test Sunita 01");
+        await campaign.verifySearch("Test Sunita 01")
         await campaign.searchReset();
         await campaign.verifyReset(row_count);
     })
@@ -144,7 +150,7 @@ test.describe('Campaign testcases', () => {
 
     });
 
-})
+
 
 test.afterEach(async ({ page }) => {
     await page.close();

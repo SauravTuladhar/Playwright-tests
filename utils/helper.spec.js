@@ -200,9 +200,8 @@ async function createUser(userData, accessToken, { request }) {
 }
 
 async function addCampaign(campaignData, accessToken, { request }) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/staff-user';
- //   const apiUrl = await getApiBaseUrl();
-  //  console.log('API Base URL:', apiUrl + "/marketing/campaign/");
+    const apiUrl = await getApiBaseUrl();
+    console.log('API Base URL:', apiUrl + "/marketing/campaign/");
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
