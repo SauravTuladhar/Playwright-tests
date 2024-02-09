@@ -23,7 +23,8 @@ exports.boUser = class boUser {
     this.search_text = page.getByPlaceholder('Search ...')
     this.search_button = page.locator('#table-search')
     this.search_resultcount = page.locator("//p['.ml-auto']")
-    this.search_Result = page.locator("//td['.p-1'][1]")
+    this.searchResult_Username = page.locator("//th[@scope='col'][1]//following::span[1]")
+    this.searchResult_Fullname = page.locator("//th[@scope='col'][1]//following::span[2]")
     this.click_Edit = page.locator('#table-edit')
     this.edit_titletext = page.locator("//div['.font-bold text-gray-800']//[text(),'User: Edit')]")
     this.delete_button=page.locator("#table-delete")
@@ -86,13 +87,8 @@ exports.boUser = class boUser {
     await (this.delete_button).click()
   }
 
-  async Verify_UpdateSuccess() {
-    await expect(this.toast_text).toHaveText('Added successfully!')
-  }
-
   async Verify_BoEditTitle() {
-    const text = await (this.edit_titletext)
-    console.log("testtttttt", text)
+    await (this.edit_titletext)
 
   }
 
@@ -100,8 +96,9 @@ exports.boUser = class boUser {
     await (this.click_Edit).click()
   }
 
-  async Verify_SearchResult(username) {
-    await expect(this.search_Result).toHaveText(username)
+  async Verify_SearchResult(username,fullname) {
+    await expect(this.searchResult_Username).toHaveText(username)
+    await expect(this.searchResult_Fullname).toHaveText(fullname)
   }
 
   async Verify_PagenationCount() {
