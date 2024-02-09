@@ -138,7 +138,7 @@ test.describe(' Verify BO User _ Reset', () => {
         await bo.click_BackOfficeUserMenu()
         await page.waitForTimeout(3000)
         await bo.Verify_BoListUrl()
-        await bo.Enter_Searchtext(bodata.Add.username)
+        await bo.Enter_Searchtext(bodata.Edit.username)
         await bo.click_Search()
         await page.waitForTimeout(3000)
         const rowcount1 =await bo.Count_Tabledata()
@@ -166,6 +166,7 @@ test.describe(' Verify BO User _ Delete', () => {
         await page.waitForTimeout(3000)
         await bo.Cancel_Delete()
         await bo.Verify_SearchResult(bodata.Edit.username)
+    
     })
 
     test('Search and Confirm Delete', async () => {
