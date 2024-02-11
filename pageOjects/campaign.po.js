@@ -165,7 +165,7 @@ exports.CampaignPage = class CampaignPage {
 
     }
 
-    async verifyCampaignStartDate() {
+    async verifyCampaignStartDate(campaignStartDate) {
         const table = await this.page.locator(this.campaignTable)
         const rows = await table.locator(this.campaignRow)
         const col = await table.locator(this.campaignColumn)
@@ -176,15 +176,15 @@ exports.CampaignPage = class CampaignPage {
             const tds = row.locator('td');
             stardDate = await tds.nth(1).textContent();
             
-                if (stardDate == '2024-01-11') {
+                if (stardDate == campaignStartDate) {
                     break;
                 }
             }
         
-        await expect(stardDate).toEqual('2024-01-11')
+        await expect(stardDate).toEqual(campaignStartDate)
     }
 
-    async verifyCampaignEndDate() {
+    async verifyCampaignEndDate(campaignEndDate) {
         const table = await this.page.locator(this.campaignTable)
         const rows = await table.locator(this.campaignRow)
         const col = await table.locator(this.campaignColumn)
@@ -195,12 +195,12 @@ exports.CampaignPage = class CampaignPage {
             const tds = row.locator('td');
             endDate = await tds.nth(2).textContent();
             
-                if (endDate == '2024-03-20') {
+                if (endDate == campaignEndDate) {
                     break;
                 }
             }
         
-        await expect(endDate).toEqual('2024-03-20')
+        await expect(endDate).toEqual(campaignEndDate)
     }
 
     async campaignAddFieldValidation() {

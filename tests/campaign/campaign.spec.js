@@ -41,6 +41,8 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignAddFields();
         await campaign.verifyAddSuccessMessage();
         await campaign.verifyCampaignName(campaigntestData.campaignadd.campaignName)
+        await campaign.verifyCampaignStartDate('2024-01-01')
+        await campaign.verifyCampaignEndDate('2024-03-20')
     })
 
     test('Campaign Edit and Verify List', async ({ page, request }) => {
@@ -70,8 +72,8 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignEditFields();
         await campaign.verifyEditSuccessMessage();
         await campaign.verifyCampaignName(campaigntestData.campaignedit.campaignName)
-        await campaign.verifyCampaignStartDate()
-        await campaign.verifyCampaignEndDate()
+        await campaign.verifyCampaignStartDate('2024-01-11')
+        await campaign.verifyCampaignEndDate('2024-03-20')
         await campaign.campaignDeletePage(campaigntestData.campaignedit.campaignName);
         await campaign.iscamapaignDeletePopup();
         await campaign.campaignDelete();
