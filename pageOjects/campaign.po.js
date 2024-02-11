@@ -33,18 +33,22 @@ exports.CampaignPage = class CampaignPage {
         this.campaignEditMatch = '//tbody//tr//td//span'
 
         this.campaignListView = '(//div[contains(text(),"Campaign")])[2]';
-        this.campaignCreateView='(//div[contains(text(),"Campaign: Create")])'
-        this.campaignEditView='(//div[contains(text(),"Campaign: Edit")])'
-        this.campaignDeleteView='//h2[contains(text(),"Are you sure you want to delete?")]'
+        this.campaignCreateView = '(//div[contains(text(),"Campaign: Create")])'
+        this.campaignEditView = '(//div[contains(text(),"Campaign: Edit")])'
+        this.campaignDeleteView = '//h2[contains(text(),"Are you sure you want to delete?")]'
 
         this.campaignSearchField = '//input[@placeholder="Search ..."]';
         this.campaignNameField = "//input[@id='campaign-name']"
         this.campaignStartDateField = '//div[@id="campaign-start-date"]//input'
+        this.previousMonth='//button[@aria-label="Previous month"]'
+        this.selectStartDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="1"]'
         this.campaignEndDateField = '//div[@id="campaign-end-date"]//input'
-        this.selectStartDate = '//div[@id="2024-01-31"]'
-        this.selectEndDate = '//div[@id="2024-02-28"]'
-        this.updateStartDate = '//div[@id="2024-02-02"]'
-        this.updateEndDate = '//div[@id="2024-02-24"]'
+        this.nextMonth='//button[@aria-label="Next month"]'
+        this.selectEndDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="20"]'
+        this.updateStartDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="11"]'
+        this.updateEndDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="15"]';
+
+     
         this.referralField = "//input[@id='campaign-reward-value-referral']"
         this.refereeField = "//input[@id='campaign-reward-value-referee']"
         this.sourceCodeField = "//textarea[@id='campaign-source-code']"
@@ -68,7 +72,7 @@ exports.CampaignPage = class CampaignPage {
         await this.page.waitForTimeout(5000)
         const table = await this.page.locator(this.campaignTable)
         const rows = await table.locator(this.campaignRow)
-        const rowcount=await rows.count()
+        const rowcount = await rows.count()
         await this.page.locator(this.campaignSearchField).fill(campaignSearch);
         await this.page.locator(this.campaignSearchButton).click();
         return await rowcount
@@ -80,7 +84,7 @@ exports.CampaignPage = class CampaignPage {
         await expect(campaignSearchList).toHaveText(campaignSearch);
     }
 
-    async searchReset(){
+    async searchReset() {
         await this.page.locator(this.campaignSearchResetButton).click();
     }
 
@@ -113,9 +117,11 @@ exports.CampaignPage = class CampaignPage {
     async campaignAddFields() {
         await this.page.locator(this.campaignNameField).fill(campaigntestData.campaignadd.campaignName);
         await this.page.locator(this.campaignStartDateField).click();
+        await this.page.locator(this.previousMonth).click();
         await this.page.locator(this.selectStartDate).click();
         await this.page.locator(this.campaignEndDateField).click();
         await this.page.waitForTimeout(2000);
+        await this.page.locator(this.nextMonth).click();
         await this.page.locator(this.selectEndDate).click();
         await this.page.locator(this.referralField).fill(campaigntestData.campaignadd.referral);
         await this.page.locator(this.refereeField).fill(campaigntestData.campaignadd.referee);
@@ -139,23 +145,62 @@ exports.CampaignPage = class CampaignPage {
         await expect(successMessage).toContainText(campaigntestData.campaignadd.campaignSavedMessage)
     }
 
-    async verifyCampaignList(campaignName) {
+    async verifyCampaignName(campaignName) {
         const table = await this.page.locator(this.campaignTable)
         const rows = await table.locator(this.campaignRow)
         const col = await table.locator(this.campaignColumn)
         let nameMatch = ''
-    
+        
         for (let i = 0; i < await rows.count(); i++) {
-                const row = await rows.nth(i);
-                const tds = row.locator('td');
+            const row = await rows.nth(i);
+            const tds = row.locator('td');
                 nameMatch = await tds.nth(0).textContent();
-
+            
                 if (nameMatch == campaignName) {
                     break;
                 }
-        }
-        await expect(nameMatch).toBe(campaignName)
+            }
         
+        await expect(nameMatch).toBe(campaignName)
+
+    }
+
+    async verifyCampaignStartDate() {
+        const table = await this.page.locator(this.campaignTable)
+        const rows = await table.locator(this.campaignRow)
+        const col = await table.locator(this.campaignColumn)
+        let stardDate = ''
+        
+        for (let i = 0; i < await rows.count(); i++) {
+            const row = await rows.nth(i);
+            const tds = row.locator('td');
+            stardDate = await tds.nth(1).textContent();
+            
+                if (stardDate == '2024-01-11') {
+                    break;
+                }
+            }
+        
+        await expect(stardDate).toEqual('2024-01-11')
+    }
+
+    async verifyCampaignEndDate() {
+        const table = await this.page.locator(this.campaignTable)
+        const rows = await table.locator(this.campaignRow)
+        const col = await table.locator(this.campaignColumn)
+        let endDate = ''
+        
+        for (let i = 0; i < await rows.count(); i++) {
+            const row = await rows.nth(i);
+            const tds = row.locator('td');
+            endDate = await tds.nth(2).textContent();
+            
+                if (endDate == '2024-03-20') {
+                    break;
+                }
+            }
+        
+        await expect(endDate).toEqual('2024-03-20')
     }
 
     async campaignAddFieldValidation() {
@@ -189,7 +234,7 @@ exports.CampaignPage = class CampaignPage {
         await expect(image).toContainText('Campaign Image is required')
     }
 
-    async campaignEditPage(campaignName){
+    async campaignEditPage(campaignName) {
         await this.page.locator(this.campaignSubMenu).click();
         await this.page.waitForTimeout(5000)
         const table = await this.page.locator(this.campaignTable)
@@ -203,9 +248,9 @@ exports.CampaignPage = class CampaignPage {
         await matchedRow.locator(this.campaignEditButton).click()
     }
 
-    async iscampaignEditPage(){
+    async iscampaignEditPage() {
         const campaignupdate = await this.page.locator(this.campaignEditView);
-        await expect(campaignupdate).toBeVisible();  
+        await expect(campaignupdate).toBeVisible();
     }
 
     async campaignEditFields() {
@@ -251,17 +296,17 @@ exports.CampaignPage = class CampaignPage {
         await matchedRow.locator(this.campaignDeleteButton).click();
     }
 
-    async iscamapaignDeletePopup(){
+    async iscamapaignDeletePopup() {
         const campaigndelete = await this.page.locator(this.campaignDeleteView);
         await expect(campaigndelete).toBeVisible();
     }
 
-    async campaignDelete(){
+    async campaignDelete() {
         await this.page.waitForTimeout(2000);
-        await this.page.locator(this.campaignDeleteConfirm).click();        
+        await this.page.locator(this.campaignDeleteConfirm).click();
     }
 
-    async verifycampaignDeleteMessage(){
+    async verifycampaignDeleteMessage() {
         const successMessage = await this.page.locator(this.alert);
         await expect(successMessage).toContainText(campaigntestData.campaignadd.campaignDeletedMessage)
     }
@@ -272,12 +317,12 @@ exports.CampaignPage = class CampaignPage {
         const col = await table.locator(this.campaignColumn)
         let nameMatch = ''
         for (let i = 0; i < await rows.count(); i++) {
-                const row = await rows.nth(i);
-                const tds = row.locator('td');
-                nameMatch = await tds.nth(0).textContent();
-                if (nameMatch == campaignName) {
-                    break;
-                }
+            const row = await rows.nth(i);
+            const tds = row.locator('td');
+            nameMatch = await tds.nth(0).textContent();
+            if (nameMatch == campaignName) {
+                break;
+            }
         }
         await expect(nameMatch).not.toBe(campaignName)
 
