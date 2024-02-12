@@ -14,7 +14,7 @@ exports.BrandPage = class BrandPage {
         this.brandContactPersonField = '//input[@id="brand-contact-person"]';
         this.brandContactNumberField = '//input[@id="brand-contact-number"]';
         this.brandPartnershipCodeField = '//input[@id="brand-partnership-code"]';
-        this.brandIsActive = '//input[@id="virtual-setup-enable"]';
+        this.brandIsActive = '//button[@id="switch-is-active"]';
         this.editBrand = '//span[contains(text(),"Test brand")]//following::a[1]';
         this.brandSave = '//button[@id="brand-save"]';
         this.deleteBrand = '//span[contains(text(),"Test brand delete")]//following::button[1]'; 

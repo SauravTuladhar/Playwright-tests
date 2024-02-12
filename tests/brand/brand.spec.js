@@ -3,11 +3,12 @@ import { LoginPage } from '../../pageOjects/login.po';
 import { BrandPage } from '../../pageOjects/brand.po';
 const testData = require('../../fixtures/loginFixture.json');
 const brandTestData = require('../../fixtures/brandFixture.json');
-const { createEntity, authenticateUser, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
+const { requestResponseListeners, createEntity, authenticateUser, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
 
 let accessToken, interceptId;
 
 test.beforeEach(async ({ page }) => {
+    await requestResponseListeners(page);
     const login = new LoginPage(page);
     await page.goto('/');
     await login.login(testData.validUser.userName, testData.validUser.password);
@@ -48,7 +49,7 @@ test.describe('Brand testcases', () => {
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
         const entityId = await createEntity(Data, accessToken, '/platform/brand', { request });
         await brand.brandEdit();
-        await brand.brandView();
+        await brand.brandView({ timeout: 5000 });
         await deleteEntity(accessToken, `/platform/brand/${entityId}`, { request });
         await validateEntity(accessToken, `/platform/brand/${entityId}`, '404', { request });
     })

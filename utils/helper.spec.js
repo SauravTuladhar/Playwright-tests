@@ -436,22 +436,4 @@ async function validateEntity(accessToken, module, status, { request }) {
     expect(statusCode).toBe(parseInt(status));
 }
 
-/* async function intercept(module, { context, page }) {
-    await context.route(module, async route => {
-        console.log('Intercepted request:', route.request().url());
-
-        // Continue with the intercepted request
-        await route.continue();
-
-        // Access the response once the request is completed
-        const response = await page.waitForResponse(module);
-
-        const responseBody = await response.json();
-        console.log('Response body:', JSON.stringify(responseBody));
-        interceptId = responseBody.id;
-        console.log('################', interceptId);
-        return interceptId;
-    });
-} */
-
 module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
