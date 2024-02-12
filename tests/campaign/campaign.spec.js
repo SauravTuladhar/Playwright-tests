@@ -1,12 +1,12 @@
 import { LoginPage } from '../../pageOjects/login.po';
-const { test, expect } = require("@playwright/test");
+const { test } = require("@playwright/test");
 import { CampaignPage } from '../../pageOjects/campaign.po';
 const testData = require('../../fixtures/loginFixture.json');
 const campaigntestData = require('../../fixtures/campaignFixture.json');
-const { authenticateUser, addCampaign } = require('../../utils/helper.spec.js');
+const { authenticateUser, addCampaign, getCampaignName } = require('../../utils/helper.spec.js');
 
 
-let accessToken, apiResponse, campaignName
+let accessToken, apiResponse, campaignName, title
 
 test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
@@ -43,15 +43,20 @@ test.describe('Campaign testcases', () => {
         await campaign.verifyCampaignName(campaigntestData.campaignadd.campaignName)
         await campaign.verifyCampaignStartDate('2024-01-01')
         await campaign.verifyCampaignEndDate('2024-03-20')
+        await campaign.campaignDeletePage(campaigntestData.campaignadd.campaignName);
+        await campaign.iscamapaignDeletePopup();
+        await campaign.campaignDelete();
+        await campaign.verifycampaignDeleteMessage();
+        await campaign.verifyCampaignListforDelete(campaigntestData.campaignadd.campaignName);
     })
-
     test('Campaign Edit and Verify List', async ({ page, request }) => {
         const campaign = new CampaignPage(page);
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        title = await getCampaignName();
         const campaignData = {
             "start_date": "2024-01-01",
             "end_date": "2024-03-30",
-            "name": "Test Sunita- " + (Math.random() + 1).toString(36).substring(7),
+            "name": title,
             "reward_value_referral": 44,
             "reward_value_referee": 44,
             "source_code": "Test SC",
@@ -85,10 +90,11 @@ test.describe('Campaign testcases', () => {
 test('Campaign Delete and Verify List', async ({ page, request }) => {
     const campaign = new CampaignPage(page);
     accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+    title = await getCampaignName();
     const campaignData = {
         "start_date": "2024-01-19",
         "end_date": "2024-02-04",
-        "name": "Test Sunita-" + (Math.random() + 1).toString(36).substring(7),
+        "name": title,
         "reward_value_referral": 44,
         "reward_value_referee": 44,
         "source_code": "test source code",

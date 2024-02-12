@@ -11,7 +11,7 @@
         "refereeWithReward": "Test with reward Automation",
         "refereeWithoutReward": "Test without reward Automation",
         "referralWithReward": "Test referral with reward Automation",
-        "campaignImage": "\\Users\\sunitasingh\\Downloads\\flow jira.jpg",
+        "campaignImage": "images\\flow jira.jpg",
         "campaignSavedMessage": "Added successfully!",
         "campaignDeletedMessage":"Deleted successfully."
     },
@@ -28,7 +28,7 @@
         "refereeWithReward": "Test with reward Automation Edited",
         "refereeWithoutReward": "Test without reward Automation Edited",
         "referralWithReward": "Test referral with reward Automation Edited",
-        "campaignImage": "\\Users\\sunitasingh\\Downloads\\flow jira.jpg",
+        "campaignImage": "images\\flow jira.jpg",
         "campaignUpdatedMessage": "Updated successfully!",
         "updateEndDate":"2024-01-11",
         "updateStartDate":"2024-03-15"

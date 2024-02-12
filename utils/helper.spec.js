@@ -200,8 +200,6 @@ async function createUser(userData, accessToken, { request }) {
 }
 
 async function addCampaign(campaignData, accessToken, { request }) {
- //   const apiUrl = await getApiBaseUrl();
-  //  console.log('API Base URL:', apiUrl + "/marketing/campaign/");
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -217,6 +215,13 @@ async function addCampaign(campaignData, accessToken, { request }) {
     const responseBody = await response.json();
     return responseBody.name;
 
+}
+
+async function getCampaignName() {
+    const now = new Date();
+    const dateTimeStamp = now.toISOString();
+    const title = `Automation-Campaign-${dateTimeStamp}`;
+    return title;
 }
 
 async function getAllUsers({ request }, username) {
@@ -411,4 +416,4 @@ async function getApiBaseUrl() {
     return apiUrl;
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, addCampaign, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, addCampaign,getCampaignName, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
