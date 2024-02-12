@@ -143,7 +143,6 @@ async function extractLinkFromHtml(html) {
 async function authenticateUser(username, password, { request }) {
     //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/token';
     const apiUrl = await getApiBaseUrl();
-    console.log('API Base URL:@@@@@@@@@@@@@', apiUrl);
     const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
     };
@@ -390,4 +389,69 @@ async function getApiBaseUrl() {
     return apiUrl;
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
+async function createEntity(userData, accessToken, module, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.post(apiUrl + module, {
+        headers,
+        data: JSON.stringify(userData),
+    });
+
+    const statusCode = response.status();
+    expect(statusCode).toBe(201);
+    const responseBody = await response.json();
+    const id = responseBody.id;
+    return id;
+}
+
+async function deleteEntity(accessToken, module, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.delete(apiUrl + module, {
+        headers,
+    });
+    const statusCode = response.status();
+    expect(statusCode).toBe(204);
+}
+
+async function validateEntity(accessToken, module, status, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.get(apiUrl + module, {
+        headers,
+    });
+    const statusCode = response.status();
+    expect(statusCode).toBe(parseInt(status));
+}
+
+/* async function intercept(module, { context, page }) {
+    await context.route(module, async route => {
+        console.log('Intercepted request:', route.request().url());
+
+        // Continue with the intercepted request
+        await route.continue();
+
+        // Access the response once the request is completed
+        const response = await page.waitForResponse(module);
+
+        const responseBody = await response.json();
+        console.log('Response body:', JSON.stringify(responseBody));
+        interceptId = responseBody.id;
+        console.log('################', interceptId);
+        return interceptId;
+    });
+} */
+
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };

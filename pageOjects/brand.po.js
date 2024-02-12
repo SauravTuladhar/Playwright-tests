@@ -10,15 +10,19 @@ exports.BrandPage = class BrandPage {
         this.brandSearchBlistValidation = '(//div[contains(text(),"Brand")])[2]//following::span[2]';
         this.brandListView = '(//div[contains(text(),"Brand")])[2]//following::table';
         this.brandAddButton = '//span[contains(text(),"Add")]';
-        this.brandNameField = '//label[contains(text(),"Brand Name")]//following::Input[1]';
-        this.brandContactPersonField = '//label[contains(text(),"Contact Person")]//following::Input[1]';
-        this.brandContactNumberField = '//label[contains(text(),"Contact Number")]//following::Input[1]';
-        this.brandPartnershipCodeField = '//label[contains(text(),"Partnership Code")]//following::Input[1]';
-        this.brandIsActive = '//label[contains(text(),"Active")]//following::div[1]';
+        this.brandNameField = '//input[@id="brand-name"]';
+        this.brandContactPersonField = '//input[@id="brand-contact-person"]';
+        this.brandContactNumberField = '//input[@id="brand-contact-number"]';
+        this.brandPartnershipCodeField = '//input[@id="brand-partnership-code"]';
+        this.brandIsActive = '//input[@id="virtual-setup-enable"]';
+        this.editBrand = '//span[contains(text(),"Test brand")]//following::a[1]';
+        this.brandSave = '//button[@id="brand-save"]';
+        this.deleteBrand = '//span[contains(text(),"Test brand delete")]//following::button[1]'; 
+        this.confirmDelete = '//button[contains(text(),"Confirm")]';
+
     }
 
     async brandSearch(brandSearch, brandSearchValidation) {
-        await this.page.waitForTimeout(3000);
         await this.page.locator(this.brandSubMenu).click();
         await this.page.locator(this.brandSearchField).fill(brandSearch);
         await this.page.locator(this.brandSearchButton).click();
@@ -28,13 +32,11 @@ exports.BrandPage = class BrandPage {
 
     async brandView() {
         const brandList = await this.page.locator(this.brandListView);
-        await this.page.waitForTimeout(4000);
         await this.page.locator(this.brandSubMenu).click();
         await expect(brandList).toBeVisible;
     }
 
     async brandAdd(brandName, brandContactPerson, brandContactNumber, brandPartnershipCode) {
-        await this.page.waitForTimeout(5000);
         await this.page.locator(this.brandSubMenu).click();
         await this.page.locator(this.brandAddButton).click();
         await this.page.locator(this.brandNameField).fill(brandName);
@@ -42,7 +44,22 @@ exports.BrandPage = class BrandPage {
         await this.page.locator(this.brandContactNumberField).fill(brandContactNumber);
         await this.page.locator(this.brandPartnershipCodeField).fill(brandPartnershipCode);
         await this.page.locator(this.brandIsActive).click();
+        await this.page.locator(this.brandSave).click();
     }
+
+    async brandEdit() {
+        await this.page.locator(this.brandSubMenu).click();
+        await this.page.locator(this.editBrand).click();
+        await this.page.locator(this.brandNameField).fill("Update");
+        await this.page.locator(this.brandSave).click();
+    }
+
+    async brandDelete() {
+        await this.page.locator(this.brandSubMenu).click();
+        await this.page.locator(this.deleteBrand).click();
+        await this.page.locator(this.confirmDelete).click();
+    }
+
 }
 
 
