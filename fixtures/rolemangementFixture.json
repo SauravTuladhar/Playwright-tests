@@ -1,0 +1,14 @@
+{
+    "role management page url":"https://mmpbodev.vanillatech.asia/role-management",
+    "Role name":"This is a test role",
+    "Role Description":"This is test role Description",
+    "Role status":"No",
+    "Edited Role Name":"This is edited role name",
+    "Toast message":{
+        "Add sucessfull":"Added successfully!",
+        "Duplicate data":"Duplicate value for permissionpolicy",
+        "Edited sucessfull":"Updated successfully!",
+        "Delete Sucessfull":"Deleted successfully."
+    }
+
+}
