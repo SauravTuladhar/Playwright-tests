@@ -149,7 +149,7 @@ async function authenticateUser(username, password, { request }) {
     const formData = new URLSearchParams();
     formData.append('username', username);
     formData.append('password', password);
-    const response = await request.post(apiUrl + "/user/token", {
+    const response = await request.post(apiUrl + "/onboarding/manage/user/token", {
         data: formData.toString(),
         headers,
     });
@@ -170,7 +170,7 @@ async function deleteUser(userId, accessToken, { request }) {
         'Accept': '*/*',
         'access-token': accessToken
     };
-    const response = await request.delete(apiUrl + "/user/staff-user/" + userId, {
+    const response = await request.delete(apiUrl + "/onboarding/manage/user/staff-user/" + userId, {
         headers: headers
     });
     const statusCode = response.status();
@@ -179,9 +179,8 @@ async function deleteUser(userId, accessToken, { request }) {
 }
 
 async function createUser(userData, accessToken, { request }) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/staff-user';
     const apiUrl = await getApiBaseUrl();
-    console.log('API Base URL:', apiUrl + "/manage/user/staff-user");
+    console.log('API Base URL:', apiUrl + "/onboarding/manage/manage/user/staff-user");
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -198,14 +197,13 @@ async function createUser(userData, accessToken, { request }) {
 }
 
 async function getAllUsers({ request }, username) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/staff-user';
     const apiUrl = await getApiBaseUrl();
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': 'application/json',
         'access-token': accessToken,
     };
-    const response = await request.get(apiUrl + "/user/staff-user", {
+    const response = await request.get(apiUrl + "/onboarding/manage/user/staff-user", {
         headers: headers
     });
 
@@ -239,7 +237,7 @@ async function forceChangePassword(userId, accessToken, forceChangePassword = fa
         'access-token': accessToken,
         'sig': 'Automation'
     };
-    const response = await request.patch(apiUrl + "/staff-user-automation/" + userId, {
+    const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
         headers: headers,
         data: {
             "force_change_password": forceChangePassword
@@ -251,7 +249,6 @@ async function forceChangePassword(userId, accessToken, forceChangePassword = fa
 }
 
 async function updatePassword(userId, accessToken, { request }) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/staff-user-automation/'+userId;
     const apiUrl = await getApiBaseUrl();
     console.log('API Base URL:', apiUrl);
     const headers = {
@@ -259,7 +256,7 @@ async function updatePassword(userId, accessToken, { request }) {
         'access-token': accessToken,
         'sig': 'Automation'
     };
-    const response = await request.patch(apiUrl + "/staff-user-automation/" + userId, {
+    const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
         headers: headers,
         data: {
             "password": '$2b$12$mBoA0T3dG6H9ql9fo50ZReag9PJGNHSdJHNZNOvyCyDFu6GgxHPTS'
@@ -271,7 +268,6 @@ async function updatePassword(userId, accessToken, { request }) {
 }
 
 async function passwordHistory(userId, accessToken, { request }) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/staff-user-automation/'+userId;
     const apiUrl = await getApiBaseUrl();
     console.log('API Base URL:', apiUrl);
     const headers = {
@@ -279,7 +275,7 @@ async function passwordHistory(userId, accessToken, { request }) {
         'access-token': accessToken,
         'sig': 'Automation'
     };
-    const response = await request.patch(apiUrl + "/staff-user-automation/" + userId, {
+    const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
         headers: headers,
         data: {
             "password_history": null
@@ -384,7 +380,7 @@ async function uploadReport() {
 async function getApiBaseUrl() {
     apiUrl = process.env.API_BASE_URL;
     if (!apiUrl) {
-        apiUrl = 'https://mmp2backenddev.vanillatech.asia/onboarding/manage';
+        apiUrl = 'https://mmp2backenddev.vanillatech.asia';
     }
     return apiUrl;
 }

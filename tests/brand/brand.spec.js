@@ -31,8 +31,8 @@ test.describe('Brand testcases', () => {
         const brand = new BrandPage(page);
         await brand.brandAdd(brandTestData.brand.newBrandName, brandTestData.brand.brandContactPerson, brandTestData.brand.brandContactNumber, brandTestData.brand.brandPartnershipCode);
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        await deleteEntity(accessToken, `/platform/brand/${interceptId}`, { request });
-        await validateEntity(accessToken, `/platform/brand/${interceptId}`, '404', { request });
+        await deleteEntity(accessToken, `/onboarding/manage/platform/brand/${interceptId}`, { request });
+        await validateEntity(accessToken, `/onboarding/manage/platform/brand/${interceptId}`, '404', { request });
     })
 
     test('Brand Edit test', async ({ page, request }) => {
@@ -47,11 +47,11 @@ test.describe('Brand testcases', () => {
             "is_active": true
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        const entityId = await createEntity(Data, accessToken, '/platform/brand', { request });
+        const entityId = await createEntity(Data, accessToken, '/onboarding/manage/platform/brand', { request });
         await brand.brandEdit();
         await brand.brandView({ timeout: 5000 });
-        await deleteEntity(accessToken, `/platform/brand/${entityId}`, { request });
-        await validateEntity(accessToken, `/platform/brand/${entityId}`, '404', { request });
+        await deleteEntity(accessToken, `/onboarding/manage/platform/brand/${entityId}`, { request });
+        await validateEntity(accessToken, `/onboarding/manage/platform/brand/${entityId}`, '404', { request });
     })
 
     test('Brand Delete test', async ({ context, page, request }) => {
@@ -67,10 +67,10 @@ test.describe('Brand testcases', () => {
             "is_active": true
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        const entityId = await createEntity(Data, accessToken, '/platform/brand', { request });
+        const entityId = await createEntity(Data, accessToken, '/onboarding/manage/platform/brand', { request });
         await brand.brandDelete();
         await brand.brandView();
-        await validateEntity(accessToken, `/platform/brand/${entityId}`, '404', { request });
+        await validateEntity(accessToken, `/onboarding/manage/platform/brand/${entityId}`, '404', { request });
     })
 })
 
