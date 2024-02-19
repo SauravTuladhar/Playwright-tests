@@ -4,6 +4,8 @@ import { LoginPage } from '../../pageOjects/login.po';
 import { boUser } from '../../pageOjects/bouser.po.js';
 const testData = require('../../fixtures/loginFixture.json');
 const bodata = require('../../fixtures/bouserFixture.json');
+const { requestResponseListeners, createEntity, authenticateUser, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
+
 
 let page;
 
@@ -42,13 +44,13 @@ test.describe(' Verify BO User _ Creation', () => {
         await bo.click_BackOfficeUserMenu()
         await page.waitForTimeout(3000)
         await bo.Verify_BoListUrl()
-        const countBeforeCancel =await bo.Count_Tabledata()
+        const countBeforeCancel = await bo.Count_Tabledata()
         await bo.click_AddboUserMenu()
         await bo.Verify_BoAddURL()
         await bo.click_Cancel()
         await page.waitForTimeout(3000)
         await bo.Verify_BoListUrl()
-        const countAfterCancel =await bo.Count_Tabledata()
+        const countAfterCancel = await bo.Count_Tabledata()
         expect(countBeforeCancel).toBe(countAfterCancel)
     })
 
@@ -74,7 +76,7 @@ test.describe(' Verify BO User _ Creation', () => {
         await bo.Enter_Searchtext(bodata.Add.username)
         await bo.click_Search()
         await page.waitForTimeout(3000)
-        await bo.Verify_SearchResult(bodata.Add.username,bodata.Add.fullname)
+        await bo.Verify_SearchResult(bodata.Add.username, bodata.Add.fullname)
     })
 
     test('Verify Duplicate BO User Creation', async () => {
@@ -111,13 +113,49 @@ test.describe(' Verify BO User _ Search', () => {
         await page.waitForTimeout(3000)
         await bo.Verify_PagenationCount()
         await page.waitForTimeout(3000)
-        await bo.Verify_SearchResult(bodata.Add.username,bodata.Add.fullname)
+        await bo.Verify_SearchResult(bodata.Add.username, bodata.Add.fullname)
     })
 
 })
 
 test.describe(' Verify BO User _ Edit', () => {
-    test('Edit searched text', async () => {
+
+    test('API _ Add and edit', async ({ request }) => {
+        const bo = new boUser(page)
+        const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        const Data = {
+            "role": "Backoffice",
+            "name": "ok",
+            "username": "ok2202@ok.ok",
+            "phone_number": 990990000,
+            "status": "Inactive",
+            "permission_policy_id": 8
+        };
+
+        const entityId = await createEntity(Data, accessToken, '/onboarding/manage/user/staff-user', { request });
+        await bo.click_BackOfficeUserMenu()
+        await page.waitForTimeout(3000)
+        await bo.Verify_BoListUrl()
+        await bo.Enter_Searchtext('ok2202@ok.ok')
+        await bo.click_Search()
+        await page.waitForTimeout(3000)
+        await bo.click_EditButton()
+        await page.waitForTimeout(3000)
+        await bo.Verify_BoEditTitle()
+        await bo.enter_FullName('OK Three')
+        await bo.enter_userName('ok303@grr.la')
+        await bo.click_Save()
+        await page.waitForTimeout(1000)
+        await bo.Verify_ToastPopUp(bodata.message.EditSuccess)
+        await bo.Enter_Searchtext('ok303@grr.la')
+        await bo.click_Search()
+        await page.waitForTimeout(3000)
+        await bo.Verify_SearchResult('ok303@grr.la','OK Three')
+        await deleteEntity(accessToken, `/onboarding/manage/user/staff-user/${entityId}`, { request });
+        await validateEntity(accessToken, `/onboarding/manage/user/staff-user/${entityId}`, '404', { request });
+    })
+
+    test('UI - Edit searched text', async () => {
         const bo = new boUser(page)
         await bo.click_BackOfficeUserMenu()
         await page.waitForTimeout(3000)
@@ -126,7 +164,7 @@ test.describe(' Verify BO User _ Edit', () => {
         await bo.click_Search()
         await page.waitForTimeout(3000)
         await bo.Verify_PagenationCount()
-        await bo.Verify_SearchResult(bodata.Add.username,bodata.Add.fullname)
+        await bo.Verify_SearchResult(bodata.Add.username, bodata.Add.fullname)
         await bo.click_EditButton()
         await page.waitForTimeout(3000)
         await bo.Verify_BoEditTitle()
@@ -138,7 +176,7 @@ test.describe(' Verify BO User _ Edit', () => {
         await bo.Enter_Searchtext(bodata.Edit.username)
         await bo.click_Search()
         await page.waitForTimeout(3000)
-        await bo.Verify_SearchResult(bodata.Edit.username,bodata.Edit.fullname)
+        await bo.Verify_SearchResult(bodata.Edit.username, bodata.Edit.fullname)
 
     })
 })
@@ -150,15 +188,15 @@ test.describe(' Verify BO User _ Reset', () => {
         await bo.click_BackOfficeUserMenu()
         await page.waitForTimeout(3000)
         await bo.Verify_BoListUrl()
-        const countBeforeSearch =await bo.Count_Tabledata()
+        const countBeforeSearch = await bo.Count_Tabledata()
         await bo.Enter_Searchtext(bodata.Edit.username)
         await bo.click_Search()
         await page.waitForTimeout(3000)
-        const countAfterSearched =await bo.Count_Tabledata()
+        const countAfterSearched = await bo.Count_Tabledata()
         await bo.Click_Reset()
         await page.waitForTimeout(3000)
-        const countAfterReset =await bo.Count_Tabledata()
-        expect(countAfterSearched).not.toBe(countAfterReset); 
+        const countAfterReset = await bo.Count_Tabledata()
+        expect(countAfterSearched).not.toBe(countAfterReset);
         expect(countBeforeSearch).toBe(countAfterReset)
     })
 
@@ -175,15 +213,16 @@ test.describe(' Verify BO User _ Delete', () => {
         await bo.click_Search()
         await page.waitForTimeout(3000)
         await bo.Verify_PagenationCount()
-        await bo.Verify_SearchResult(bodata.Edit.username,bodata.Edit.fullname)
+        await bo.Verify_SearchResult(bodata.Edit.username, bodata.Edit.fullname)
         await bo.click_DeleteButton()
         await page.waitForTimeout(3000)
         await bo.Cancel_Delete()
-        await bo.Verify_SearchResult(bodata.Edit.username,bodata.Edit.fullname)
-    
+        await bo.Verify_SearchResult(bodata.Edit.username, bodata.Edit.fullname)
+
     })
 
-    test('Search and Confirm Delete', async () => {
+
+    test('UI_Confirm Delete from API', async () => {
         const bo = new boUser(page)
         await bo.click_BackOfficeUserMenu()
         await page.waitForTimeout(3000)
@@ -192,7 +231,7 @@ test.describe(' Verify BO User _ Delete', () => {
         await bo.click_Search()
         await page.waitForTimeout(3000)
         await bo.Verify_PagenationCount()
-        await bo.Verify_SearchResult(bodata.Edit.username,bodata.Edit.fullname)
+        await bo.Verify_SearchResult(bodata.Edit.username, bodata.Edit.fullname)
         await bo.click_DeleteButton()
         await page.waitForTimeout(3000)
         await bo.Confirm_Delete()
@@ -200,5 +239,22 @@ test.describe(' Verify BO User _ Delete', () => {
         await bo.Verify_ToastPopUp(bodata.message.DeleteSuccess)
     })
 
-})
+    test('API _ Add and Confirm Delete', async ({request}) => {
+        const bo = new boUser(page)
+        const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        const Data = {
+            "role": "Backoffice",
+            "name": "ok",
+            "username": "ok101@ok.ok",
+            "phone_number": 999991000,
+            "status": "Inactive",
+            "permission_policy_id": 8
+        };
 
+        const entityId = await createEntity(Data, accessToken, '/onboarding/manage/user/staff-user', { request });
+        await deleteEntity(accessToken, `/onboarding/manage/user/staff-user/${entityId}`, { request });
+        await validateEntity(accessToken, `/onboarding/manage/user/staff-user/${entityId}`, '404', { request });
+        
+    })
+
+})
