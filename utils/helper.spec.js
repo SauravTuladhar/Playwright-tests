@@ -222,6 +222,13 @@ async function getCampaignName() {
     return title;
 }
 
+async function getUpdatedCampaignName() {
+    const now = new Date();
+    const dateTimeStamp = now.toISOString();
+    const title = `Updated Automation-Campaign-${dateTimeStamp}`;
+    return title;
+}
+
 async function getAllUsers({ request }, username) {
     const apiUrl = await getApiBaseUrl();
     console.log('API Base URL:', apiUrl);
@@ -459,4 +466,4 @@ async function validateEntity(accessToken, module, status, { request }) {
     expect(statusCode).toBe(parseInt(status));
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, getCampaignName, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, getCampaignName, getUpdatedCampaignName, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };

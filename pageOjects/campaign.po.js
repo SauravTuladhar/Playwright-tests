@@ -197,11 +197,6 @@ exports.CampaignPage = class CampaignPage {
     }
 
     async verifyCampaignDataTable(campaignName, campaignSDate, campaignEDate) {
-        console.log("name==" + campaignName)
-        console.log("name==" + campaignSDate)
-        console.log("name==" + campaignEDate)
-
-
         await this.page.waitForTimeout(5000)
         const tableCampaignName = await this.page.$$('//tbody/tr/td[1]/child::span')
         const tableStartDate = await this.page.$$('//tbody/tr/td[2]')
@@ -212,8 +207,6 @@ exports.CampaignPage = class CampaignPage {
 
         for (let i = 0; i < tableCampaignName.length; i++) {
             const data = await tableCampaignName[i].textContent();
-            console.log("name==" + data)
-
             tableNameData.push(data)
         }
 
@@ -224,24 +217,12 @@ exports.CampaignPage = class CampaignPage {
 
             for (let i = 0; i < tableStartDate.length; i++) {
                 const data = await tableStartDate[i].textContent();
-                console.log("date==" + data)
-
                 tableStartDateData.push(data)
             }
             const date1String = campaignSDate;
             const date2String = tableStartDateData[indexIntable];
-
             const date1 = moment(date1String, 'MM-DD-YYYY');
             const date2 = moment(date2String, 'YYYY-MM-DD');
-
-            console.log("Day of date1:", date1.date());
-            console.log("Month of date1:", date1.month()+1);
-            console.log("Year of date1:", date1.year());
-
-            console.log("Day of date2:", date2.date());
-            console.log("Month of date2:", date2.month()+1);
-            console.log("Year of date2:", date2.year());
-
             const areSameSDate = date1.isSame(date2, 'day') && date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
             await expect(areSameSDate).toBe(true)
 
@@ -254,15 +235,12 @@ exports.CampaignPage = class CampaignPage {
             const date4String = tableEndDateData[indexIntable];
             const date3 = moment(date3String, 'MM-DD-YYYY');
             const date4 = moment(date4String, 'YYYY-MM-DD');
-
             const areSameEDate = date3.isSame(date4, 'day') && date3.isSame(date4, 'month') && date3.isSame(date4, 'year');
             await expect(areSameEDate).toBe(true)
             return indexIntable
 
         }
     }
-
-
 
     async verifyAddValidationMessage() {
         const name = await this.page.locator(this.campaignValidation)
@@ -291,8 +269,6 @@ exports.CampaignPage = class CampaignPage {
         await expect(image).toContainText('Campaign Image is required')
     }
 
-
-
     async verifyEditSuccessMessage(savedMsg) {
         const successMessage = await this.page.locator(this.alert);
 
@@ -320,23 +296,6 @@ exports.CampaignPage = class CampaignPage {
         await expect(successMessage).toContainText(campaigntestData.campaignadd.campaignDeletedMessage)
     }
 
-    // async verifyCampaignListforDelete(campaignName) {
-    //     const table = await this.page.locator(this.campaignTable)
-    //     const rows = await table.locator(this.campaignRow)
-    //     const col = await table.locator(this.campaignColumn)
-    //     let nameMatch = ''
-    //     for (let i = 0; i < await rows.count(); i++) {
-    //         const row = await rows.nth(i);
-    //         const tds = row.locator('td');
-    //         nameMatch = await tds.nth(0).textContent();
-    //         if (nameMatch == campaignName) {
-    //             break;
-    //         }
-    //     }
-    //     await expect(nameMatch).not.toBe(campaignName)
-
-    // }
-
     async verifyCampaignListforDelete(campaignName, campaignSDate, campaignEDate) {
         await this.page.waitForTimeout(5000)
         const tableCampaignName = await this.page.$$('//tbody/tr/td[1]/child::span')
@@ -354,7 +313,6 @@ exports.CampaignPage = class CampaignPage {
 
         if (tableNameData.includes(campaignName)) {
             var indexIntable = await tableNameData.indexOf(campaignName);
-            console.log("Index==" + indexIntable)
 
             for (let i = 0; i < tableStartDate.length; i++) {
                 const data = await tableStartDate[i].textContent();
@@ -383,7 +341,6 @@ exports.CampaignPage = class CampaignPage {
             await expect(areSameEDate).toBe(false)
 
         }
-        console.log("Index out==" + indexIntable)
 
     }
 

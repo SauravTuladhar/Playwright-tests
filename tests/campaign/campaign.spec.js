@@ -3,7 +3,7 @@ const { test } = require("@playwright/test");
 import { CampaignPage } from '../../pageOjects/campaign.po';
 const testData = require('../../fixtures/loginFixture.json');
 const campaigntestData = require('../../fixtures/campaignFixture.json');
-const { authenticateUser, addCampaign, getCampaignName, createEntity, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
+const { authenticateUser, addCampaign, getCampaignName, getUpdatedCampaignName, createEntity, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
 
 
 let accessToken, apiResponse, campaignName, title, interceptId
@@ -76,24 +76,23 @@ test.describe('Campaign testcases', () => {
         await campaign.iscampaignEditPage();
         const sdatevalue=await campaign.campaignUpdateStartDateField();
         const edatevalue=await campaign.campaignUpdateEndDateField();
-        await campaign.campaignAddFields(campaigntestData.campaignedit.campaignName,campaigntestData.campaignedit.referral,campaigntestData.campaignedit.referee,campaigntestData.campaignedit.sourceCode,campaigntestData.campaignedit.sms,campaigntestData.campaignedit.socialChannel,campaigntestData.campaignedit.awardDescription,campaigntestData.campaignedit.awardTitle,campaigntestData.campaignedit.referralWithReward,campaigntestData.campaignedit.refereeWithoutReward,campaigntestData.campaignedit.refereeWithReward,campaigntestData.campaignedit.campaignImage);
+        const name=await getUpdatedCampaignName()
+        await campaign.campaignAddFields(name,campaigntestData.campaignedit.referral,campaigntestData.campaignedit.referee,campaigntestData.campaignedit.sourceCode,campaigntestData.campaignedit.sms,campaigntestData.campaignedit.socialChannel,campaigntestData.campaignedit.awardDescription,campaigntestData.campaignedit.awardTitle,campaigntestData.campaignedit.referralWithReward,campaigntestData.campaignedit.refereeWithoutReward,campaigntestData.campaignedit.refereeWithReward,campaigntestData.campaignedit.campaignImage);
         await campaign.campaignSave();
         await campaign.verifyEditSuccessMessage();
-        await campaign.verifyCampaignDataTable(campaigntestData.campaignedit.campaignName,sdatevalue,edatevalue)
+        await campaign.verifyCampaignDataTable(name,sdatevalue,edatevalue)
         await deleteEntity(accessToken, `/notification/manage/marketing/campaign/${entityId}`, { request });
         await validateEntity(accessToken, `/notification/manage/marketing/campaign/${entityId}`, '404', { request });
     })
 })
 
-test.only('Campaign Delete and Verify List', async ({ page, request }) => {
+test('Campaign Delete and Verify List', async ({ page, request }) => {
     const campaign = new CampaignPage(page);
     accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
     title = await getCampaignName();
     const startDate=campaigntestData.campaignadd.startDate
     const endDate=campaigntestData.campaignadd.endDate
-    console.log(startDate)
-    console.log(endDate)
-
+   
     const campaignData = {
         "start_date": "2024-01-05",
         "end_date":  "2024-03-21",
@@ -114,7 +113,6 @@ test.only('Campaign Delete and Verify List', async ({ page, request }) => {
     await campaign.campaignView();
     await campaign.isCampaignPage();
     const campaigndata  = await campaign.verifyCampaignDataTable("Test Sunita-01","01-052024", "03-21-2024");
-
     await campaign.campaignDeletePage(campaigndata);
     await campaign.iscamapaignDeletePopup();
     await campaign.campaignDelete();
