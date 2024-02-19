@@ -13,9 +13,10 @@
         "referralWithReward": "Test referral with reward Automation",
         "campaignImage": "images\\flow jira.jpg",
         "campaignSavedMessage": "Added successfully!",
-        "campaignDeletedMessage":"Deleted successfully."
+        "campaignDeletedMessage": "Deleted successfully.",
+        "startDate": "1",
+        "endDate": "20"
     },
-
     "campaignedit": {
         "campaignName": "Test Sunita Automation-01 Edited",
         "referral": "500",
@@ -30,7 +31,7 @@
         "referralWithReward": "Test referral with reward Automation Edited",
         "campaignImage": "images\\flow jira.jpg",
         "campaignUpdatedMessage": "Updated successfully!",
-        "updateEndDate":"2024-01-11",
-        "updateStartDate":"2024-03-15"
+        "updateStartDate": "11",
+        "updateEndDate": "19"
     }
 }

@@ -2,6 +2,10 @@ const { expect } = require("@playwright/test");
 const { match } = require("assert");
 const { name } = require("../playwright.config");
 const campaigntestData = JSON.parse(JSON.stringify(require('../fixtures/campaignFixture.json')));
+const moment = require('moment');
+
+
+let csdate = campaigntestData.campaignadd.startDate, cedate = campaigntestData.campaignadd.endDate, updatecsdate = campaigntestData.campaignedit.updateStartDate, updatecedate = campaigntestData.campaignedit.updateEndDate
 
 exports.CampaignPage = class CampaignPage {
     constructor(page) {
@@ -40,15 +44,15 @@ exports.CampaignPage = class CampaignPage {
         this.campaignSearchField = '//input[@placeholder="Search ..."]';
         this.campaignNameField = "//input[@id='campaign-name']"
         this.campaignStartDateField = '//div[@id="campaign-start-date"]//input'
-        this.previousMonth='//button[@aria-label="Previous month"]'
-        this.selectStartDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="1"]'
+        this.previousMonth = '//button[@aria-label="Previous month"]'
+        this.selectStartDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${csdate}]`
         this.campaignEndDateField = '//div[@id="campaign-end-date"]//input'
-        this.nextMonth='//button[@aria-label="Next month"]'
-        this.selectEndDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="20"]'
-        this.updateStartDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="11"]'
-        this.updateEndDate = '//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()="15"]';
+        this.nextMonth = '//button[@aria-label="Next month"]'
+        this.selectEndDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${cedate}]`
+        this.updateStartDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecsdate}]`
+        this.updateEndDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecedate}]`;
 
-     
+
         this.referralField = "//input[@id='campaign-reward-value-referral']"
         this.refereeField = "//input[@id='campaign-reward-value-referee']"
         this.sourceCodeField = "//textarea[@id='campaign-source-code']"
@@ -59,7 +63,7 @@ exports.CampaignPage = class CampaignPage {
         this.refereeWithRewardField = "//input[@id='campaign-referee-notification-description-with-reward']"
         this.refereeWithoutRewardField = "//input[@id='campaign-referee-notification-description-without-reward']"
         this.referralWithRewardField = "//input[@id='campaign-referral-notification-description-with-reward']"
-        this.campaignImageUpload = '//div[@id="campaign-image"]//div//label//span'
+        this.campaignImageUpload = '//label[@for="campaign-image"]//following::label[1]'
         this.campaignImageReupload = '//div[@id="campaign-image"]//div//label//img'
 
         this.campaignTable = '(//div[contains(text(),"Campaign")])[2]//following::table'
@@ -114,28 +118,75 @@ exports.CampaignPage = class CampaignPage {
         await expect(campaignCreate).toBeVisible();
     }
 
-    async campaignAddFields() {
-        await this.page.locator(this.campaignNameField).fill(campaigntestData.campaignadd.campaignName);
+    async campaignAddStartDateField() {
         await this.page.locator(this.campaignStartDateField).click();
         await this.page.locator(this.previousMonth).click();
         await this.page.locator(this.selectStartDate).click();
+        const inputValue = await this.page.$eval(this.campaignStartDateField, input => input.value);
+        return inputValue
+    }
+    async campaignAddEndDateField() {
         await this.page.locator(this.campaignEndDateField).click();
         await this.page.waitForTimeout(2000);
         await this.page.locator(this.nextMonth).click();
         await this.page.locator(this.selectEndDate).click();
-        await this.page.locator(this.referralField).fill(campaigntestData.campaignadd.referral);
-        await this.page.locator(this.refereeField).fill(campaigntestData.campaignadd.referee);
-        await this.page.locator(this.sourceCodeField).fill(campaigntestData.campaignadd.sourceCode);
-        await this.page.locator(this.smsField).fill(campaigntestData.campaignadd.sms);
-        await this.page.locator(this.socialChannelField).fill(campaigntestData.campaignadd.socialChannel);
-        await this.page.locator(this.awardDescriptionField).fill(campaigntestData.campaignadd.awardDescription);
-        await this.page.locator(this.awardTitleField).fill(campaigntestData.campaignadd.awardTitle);
-        await this.page.locator(this.refereeWithRewardField).fill(campaigntestData.campaignadd.refereeWithReward);
-        await this.page.locator(this.refereeWithoutRewardField).fill(campaigntestData.campaignadd.refereeWithoutReward);
-        await this.page.locator(this.referralWithRewardField).fill(campaigntestData.campaignadd.referralWithReward);
-        await this.page.locator(this.campaignImageUpload).click();
-        await this.page.locator(this.campaignImageUpload).setInputFiles(campaigntestData.campaignadd.campaignImage);
+        const inputValue = await this.page.$eval(this.campaignEndDateField, input => input.value);
+        return inputValue
+
+    }
+
+    async campaignUpdateStartDateField() {
+        await this.page.locator(this.campaignStartDateField).click();
+        await this.page.locator(this.updateStartDate).click();
+        const inputValue = await this.page.$eval(this.campaignStartDateField, input => input.value);
+        return inputValue
+    }
+    async campaignUpdateEndDateField() {
+        await this.page.locator(this.campaignEndDateField).click();
         await this.page.waitForTimeout(2000);
+        await this.page.locator(this.updateEndDate).click();
+        const inputValue = await this.page.$eval(this.campaignEndDateField, input => input.value);
+        return inputValue
+
+    }
+
+    async campaignAddFields(name, referral, referee, scode, sms, schannel, awarddesc, awardtitle, refereereward, refereeworeward, referralreward, image) {
+        await this.page.locator(this.campaignNameField).fill(name);
+        await this.page.locator(this.referralField).fill(referral);
+        await this.page.locator(this.refereeField).fill(referee);
+        await this.page.locator(this.sourceCodeField).fill(scode);
+        await this.page.locator(this.smsField).fill(sms);
+        await this.page.locator(this.socialChannelField).fill(schannel);
+        await this.page.locator(this.awardDescriptionField).fill(awarddesc);
+        await this.page.locator(this.awardTitleField).fill(awardtitle);
+        await this.page.locator(this.refereeWithRewardField).fill(refereereward);
+        await this.page.locator(this.refereeWithoutRewardField).fill(refereeworeward);
+        await this.page.locator(this.referralWithRewardField).fill(referralreward);
+        await this.page.locator(this.campaignImageUpload).click();
+        await this.page.locator(this.campaignImageUpload).setInputFiles(image);
+        await this.page.waitForTimeout(2000);
+    }
+
+    async campaignEditPage(campaignName) {
+        await this.page.locator(this.campaignSubMenu).click();
+        await this.page.waitForTimeout(5000)
+        const table = await this.page.locator(this.campaignTable)
+        const col = await table.locator(this.campaignColumn)
+        const rows = await table.locator(this.campaignRow)
+        const matchedRow = rows.filter({
+            has: this.page.locator(this.tableData),
+            hasText: campaignName
+        })
+        await this.page.waitForTimeout(2000)
+        await matchedRow.locator(this.campaignEditButton).click()
+    }
+
+    async iscampaignEditPage() {
+        const campaignupdate = await this.page.locator(this.campaignEditView);
+        await expect(campaignupdate).toBeVisible();
+    }
+
+    async campaignSave() {
         await this.page.locator(this.saveButton).click();
         await this.page.waitForTimeout(2000);
     }
@@ -145,67 +196,73 @@ exports.CampaignPage = class CampaignPage {
         await expect(successMessage).toContainText(campaigntestData.campaignadd.campaignSavedMessage)
     }
 
-    async verifyCampaignName(campaignName) {
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
-        const col = await table.locator(this.campaignColumn)
-        let nameMatch = ''
-        
-        for (let i = 0; i < await rows.count(); i++) {
-            const row = await rows.nth(i);
-            const tds = row.locator('td');
-                nameMatch = await tds.nth(0).textContent();
-            
-                if (nameMatch == campaignName) {
-                    break;
-                }
+    async verifyCampaignDataTable(campaignName, campaignSDate, campaignEDate) {
+        console.log("name==" + campaignName)
+        console.log("name==" + campaignSDate)
+        console.log("name==" + campaignEDate)
+
+
+        await this.page.waitForTimeout(5000)
+        const tableCampaignName = await this.page.$$('//tbody/tr/td[1]/child::span')
+        const tableStartDate = await this.page.$$('//tbody/tr/td[2]')
+        const tableEndDate = await this.page.$$('//tbody/tr/td[3]')
+        const tableNameData = [];
+        const tableStartDateData = [];
+        const tableEndDateData = [];
+
+        for (let i = 0; i < tableCampaignName.length; i++) {
+            const data = await tableCampaignName[i].textContent();
+            console.log("name==" + data)
+
+            tableNameData.push(data)
+        }
+
+        await expect(tableNameData).toContainEqual(campaignName)
+
+        if (tableNameData.includes(campaignName)) {
+            var indexIntable = await tableNameData.indexOf(campaignName);
+
+            for (let i = 0; i < tableStartDate.length; i++) {
+                const data = await tableStartDate[i].textContent();
+                console.log("date==" + data)
+
+                tableStartDateData.push(data)
             }
-        
-        await expect(nameMatch).toBe(campaignName)
+            const date1String = campaignSDate;
+            const date2String = tableStartDateData[indexIntable];
 
-    }
+            const date1 = moment(date1String, 'MM-DD-YYYY');
+            const date2 = moment(date2String, 'YYYY-MM-DD');
 
-    async verifyCampaignStartDate(campaignStartDate) {
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
-        const col = await table.locator(this.campaignColumn)
-        let stardDate = ''
-        
-        for (let i = 0; i < await rows.count(); i++) {
-            const row = await rows.nth(i);
-            const tds = row.locator('td');
-            stardDate = await tds.nth(1).textContent();
-            
-                if (stardDate == campaignStartDate) {
-                    break;
-                }
+            console.log("Day of date1:", date1.date());
+            console.log("Month of date1:", date1.month()+1);
+            console.log("Year of date1:", date1.year());
+
+            console.log("Day of date2:", date2.date());
+            console.log("Month of date2:", date2.month()+1);
+            console.log("Year of date2:", date2.year());
+
+            const areSameSDate = date1.isSame(date2, 'day') && date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
+            await expect(areSameSDate).toBe(true)
+
+            for (let i = 0; i < tableEndDate.length; i++) {
+                const data = await tableEndDate[i].textContent();
+                tableEndDateData.push(data)
             }
-        
-        await expect(stardDate).toEqual(campaignStartDate)
+
+            const date3String = campaignEDate;
+            const date4String = tableEndDateData[indexIntable];
+            const date3 = moment(date3String, 'MM-DD-YYYY');
+            const date4 = moment(date4String, 'YYYY-MM-DD');
+
+            const areSameEDate = date3.isSame(date4, 'day') && date3.isSame(date4, 'month') && date3.isSame(date4, 'year');
+            await expect(areSameEDate).toBe(true)
+            return indexIntable
+
+        }
     }
 
-    async verifyCampaignEndDate(campaignEndDate) {
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
-        const col = await table.locator(this.campaignColumn)
-        let endDate = ''
-        
-        for (let i = 0; i < await rows.count(); i++) {
-            const row = await rows.nth(i);
-            const tds = row.locator('td');
-            endDate = await tds.nth(2).textContent();
-            
-                if (endDate == campaignEndDate) {
-                    break;
-                }
-            }
-        
-        await expect(endDate).toEqual(campaignEndDate)
-    }
 
-    async campaignAddFieldValidation() {
-        await this.page.locator(this.saveButton).click();
-    }
 
     async verifyAddValidationMessage() {
         const name = await this.page.locator(this.campaignValidation)
@@ -234,47 +291,7 @@ exports.CampaignPage = class CampaignPage {
         await expect(image).toContainText('Campaign Image is required')
     }
 
-    async campaignEditPage(campaignName) {
-        await this.page.locator(this.campaignSubMenu).click();
-        await this.page.waitForTimeout(5000)
-        const table = await this.page.locator(this.campaignTable)
-        const col = await table.locator(this.campaignColumn)
-        const rows = await table.locator(this.campaignRow)
-        const matchedRow = rows.filter({
-            has: this.page.locator(this.tableData),
-            hasText: campaignName
-        })
-        await this.page.waitForTimeout(2000)
-        await matchedRow.locator(this.campaignEditButton).click()
-    }
 
-    async iscampaignEditPage() {
-        const campaignupdate = await this.page.locator(this.campaignEditView);
-        await expect(campaignupdate).toBeVisible();
-    }
-
-    async campaignEditFields() {
-        await this.page.locator(this.campaignNameField).fill(campaigntestData.campaignedit.campaignName);
-        await this.page.locator(this.campaignStartDateField).click()
-        await this.page.locator(this.updateStartDate).click();
-        await this.page.waitForTimeout(2000);
-        await this.page.locator(this.campaignEndDateField).click()
-        await this.page.locator(this.updateEndDate).click();
-        await this.page.locator(this.referralField).fill(campaigntestData.campaignedit.referral);
-        await this.page.locator(this.refereeField).fill(campaigntestData.campaignedit.referee);
-        await this.page.locator(this.sourceCodeField).fill(campaigntestData.campaignedit.sourceCode);
-        await this.page.locator(this.smsField).fill(campaigntestData.campaignedit.sms);
-        await this.page.locator(this.socialChannelField).fill(campaigntestData.campaignedit.socialChannel);
-        await this.page.locator(this.awardDescriptionField).fill(campaigntestData.campaignedit.awardDescription);
-        await this.page.locator(this.awardTitleField).fill(campaigntestData.campaignedit.awardTitle);
-        await this.page.locator(this.refereeWithRewardField).fill(campaigntestData.campaignedit.refereeWithReward);
-        await this.page.locator(this.refereeWithoutRewardField).fill(campaigntestData.campaignedit.refereeWithoutReward);
-        await this.page.locator(this.referralWithRewardField).fill(campaigntestData.campaignedit.referralWithReward);
-        await this.page.locator(this.campaignImageReupload).click();
-        await this.page.locator(this.campaignImageReupload).setInputFiles(campaigntestData.campaignadd.campaignImage);
-        await this.page.locator(this.saveButton).click();
-        await this.page.waitForTimeout(2000);
-    }
 
     async verifyEditSuccessMessage(savedMsg) {
         const successMessage = await this.page.locator(this.alert);
@@ -282,18 +299,10 @@ exports.CampaignPage = class CampaignPage {
         await expect(successMessage).toContainText(campaigntestData.campaignedit.campaignUpdatedMessage)
     }
 
-    async campaignDeletePage(campaignSearch) {
-        await this.page.locator(this.campaignSubMenu).click();
-        await this.page.waitForTimeout(5000)
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
-        const col = await table.locator(this.campaignColumn)
-        const matchedRow = rows.filter({
-            has: this.page.locator(this.tableData),
-            hasText: campaignSearch
-        })
-        await this.page.waitForTimeout(2000);
-        await matchedRow.locator(this.campaignDeleteButton).click();
+    async campaignDeletePage(campaignData) {
+
+        const deletebutton = await this.page.$$("//tbody/tr/td[5]//button")
+        await deletebutton[campaignData].click();
     }
 
     async iscamapaignDeletePopup() {
@@ -311,24 +320,75 @@ exports.CampaignPage = class CampaignPage {
         await expect(successMessage).toContainText(campaigntestData.campaignadd.campaignDeletedMessage)
     }
 
-    async verifyCampaignListforDelete(campaignName) {
-        const table = await this.page.locator(this.campaignTable)
-        const rows = await table.locator(this.campaignRow)
-        const col = await table.locator(this.campaignColumn)
-        let nameMatch = ''
-        for (let i = 0; i < await rows.count(); i++) {
-            const row = await rows.nth(i);
-            const tds = row.locator('td');
-            nameMatch = await tds.nth(0).textContent();
-            if (nameMatch == campaignName) {
-                break;
-            }
+    // async verifyCampaignListforDelete(campaignName) {
+    //     const table = await this.page.locator(this.campaignTable)
+    //     const rows = await table.locator(this.campaignRow)
+    //     const col = await table.locator(this.campaignColumn)
+    //     let nameMatch = ''
+    //     for (let i = 0; i < await rows.count(); i++) {
+    //         const row = await rows.nth(i);
+    //         const tds = row.locator('td');
+    //         nameMatch = await tds.nth(0).textContent();
+    //         if (nameMatch == campaignName) {
+    //             break;
+    //         }
+    //     }
+    //     await expect(nameMatch).not.toBe(campaignName)
+
+    // }
+
+    async verifyCampaignListforDelete(campaignName, campaignSDate, campaignEDate) {
+        await this.page.waitForTimeout(5000)
+        const tableCampaignName = await this.page.$$('//tbody/tr/td[1]/child::span')
+        const tableStartDate = await this.page.$$('//tbody/tr/td[2]')
+        const tableEndDate = await this.page.$$('//tbody/tr/td[3]')
+        const tableNameData = [];
+        const tableStartDateData = [];
+        const tableEndDateData = [];
+        var indexIntable = null;
+
+        for (let i = 0; i < tableCampaignName.length; i++) {
+            const data = await tableCampaignName[i].textContent();
+            tableNameData.push(data)
         }
-        await expect(nameMatch).not.toBe(campaignName)
+
+        if (tableNameData.includes(campaignName)) {
+            var indexIntable = await tableNameData.indexOf(campaignName);
+            console.log("Index==" + indexIntable)
+
+            for (let i = 0; i < tableStartDate.length; i++) {
+                const data = await tableStartDate[i].textContent();
+                tableStartDateData.push(data)
+            }
+            const date1String = campaignSDate;
+            const date2String = tableStartDateData[indexIntable];
+
+            const date1 = moment(date1String, 'MM-DD-YYYY');
+            const date2 = moment(date2String, 'YYYY-MM-DD');
+
+            const areSameSDate = date1.isSame(date2, 'day') && date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
+            await expect(areSameSDate).toBe(false)
+
+            for (let i = 0; i < tableEndDate.length; i++) {
+                const data = await tableEndDate[i].textContent();
+                tableEndDateData.push(data)
+            }
+
+            const date3String = campaignEDate;
+            const date4String = tableEndDateData[indexIntable];
+            const date3 = moment(date3String, 'MM-DD-YYYY');
+            const date4 = moment(date4String, 'YYYY-MM-DD');
+
+            const areSameEDate = date3.isSame(date4, 'day') && date3.isSame(date4, 'month') && date3.isSame(date4, 'year');
+            await expect(areSameEDate).toBe(false)
+
+        }
+        console.log("Index out==" + indexIntable)
 
     }
 
 }
+
 
 
 

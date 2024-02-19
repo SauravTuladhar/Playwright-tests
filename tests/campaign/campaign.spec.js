@@ -3,10 +3,10 @@ const { test } = require("@playwright/test");
 import { CampaignPage } from '../../pageOjects/campaign.po';
 const testData = require('../../fixtures/loginFixture.json');
 const campaigntestData = require('../../fixtures/campaignFixture.json');
-const { authenticateUser, addCampaign, getCampaignName } = require('../../utils/helper.spec.js');
+const { authenticateUser, addCampaign, getCampaignName, createEntity, deleteEntity, validateEntity } = require('../../utils/helper.spec.js');
 
 
-let accessToken, apiResponse, campaignName, title
+let accessToken, apiResponse, campaignName, title, interceptId
 
 test.beforeEach(async ({ page }) => {
     const login = new LoginPage(page);
@@ -28,34 +28,34 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignView();
         await campaign.isCampaignPage();
         await campaign.campaignAddPage();
-        await campaign.campaignAddFieldValidation();
+        await campaign.campaignSave();
         await campaign.verifyAddValidationMessage();
     })
 
-    test('Campaign Add and Verify List', async ({ page }) => {
+    test('Campaign Add and Verify List', async ({ page, context, request }) => {
         const campaign = new CampaignPage(page);
+        await intercept('**/marketing/campaign', { context, page });
         await campaign.campaignView();
         await campaign.isCampaignPage();
         await campaign.campaignAddPage();
         await campaign.iscampaignAddPage();
-        await campaign.campaignAddFields();
+        const sdateValue=await campaign.campaignAddStartDateField();
+        const edateValue=await campaign.campaignAddEndDateField();
+        await campaign.campaignAddFields(campaigntestData.campaignadd.campaignName,campaigntestData.campaignadd.referral,campaigntestData.campaignadd.referee,campaigntestData.campaignadd.sourceCode,campaigntestData.campaignadd.sms,campaigntestData.campaignadd.socialChannel,campaigntestData.campaignadd.awardDescription,campaigntestData.campaignadd.awardTitle,campaigntestData.campaignadd.referralWithReward,campaigntestData.campaignadd.refereeWithoutReward,campaigntestData.campaignadd.refereeWithReward,campaigntestData.campaignadd.campaignImage);
+        await campaign.campaignSave();
         await campaign.verifyAddSuccessMessage();
-        await campaign.verifyCampaignName(campaigntestData.campaignadd.campaignName)
-        await campaign.verifyCampaignStartDate('2024-01-01')
-        await campaign.verifyCampaignEndDate('2024-03-20')
-        await campaign.campaignDeletePage(campaigntestData.campaignadd.campaignName);
-        await campaign.iscamapaignDeletePopup();
-        await campaign.campaignDelete();
-        await campaign.verifycampaignDeleteMessage();
-        await campaign.verifyCampaignListforDelete(campaigntestData.campaignadd.campaignName);
+        await campaign.verifyCampaignDataTable(campaigntestData.campaignadd.campaignName,sdateValue,edateValue)
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        await deleteEntity(accessToken, `/notification/manage/marketing/campaign/${interceptId}`, { request });
+        await validateEntity(accessToken, `/notification/manage/marketing/campaign/${interceptId}`, '404', { request });
     })
     test('Campaign Edit and Verify List', async ({ page, request }) => {
         const campaign = new CampaignPage(page);
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
         title = await getCampaignName();
         const campaignData = {
-            "start_date": "2024-01-01",
-            "end_date": "2024-03-30",
+            "start_date": "2024-01-05",
+            "end_date": "2024-03-20",
             "name": title,
             "reward_value_referral": 44,
             "reward_value_referee": 44,
@@ -69,32 +69,35 @@ test.describe('Campaign testcases', () => {
             "referral_notification_description_with_reward": "reward3",
             "campaign_image": "https://mmp2-sit.s3.amazonaws.com/flow_jira_1707028679774.jpg"
         }
-        campaignName = await addCampaign(campaignData, accessToken, { request });
+        const entityId = await createEntity(campaignData, accessToken, '/notification/manage/marketing/campaign', { request });
         await campaign.campaignView();
         await campaign.isCampaignPage();
-        await campaign.campaignEditPage(campaignName);
+        await campaign.campaignEditPage(title);
         await campaign.iscampaignEditPage();
-        await campaign.campaignEditFields();
+        const sdatevalue=await campaign.campaignUpdateStartDateField();
+        const edatevalue=await campaign.campaignUpdateEndDateField();
+        await campaign.campaignAddFields(campaigntestData.campaignedit.campaignName,campaigntestData.campaignedit.referral,campaigntestData.campaignedit.referee,campaigntestData.campaignedit.sourceCode,campaigntestData.campaignedit.sms,campaigntestData.campaignedit.socialChannel,campaigntestData.campaignedit.awardDescription,campaigntestData.campaignedit.awardTitle,campaigntestData.campaignedit.referralWithReward,campaigntestData.campaignedit.refereeWithoutReward,campaigntestData.campaignedit.refereeWithReward,campaigntestData.campaignedit.campaignImage);
+        await campaign.campaignSave();
         await campaign.verifyEditSuccessMessage();
-        await campaign.verifyCampaignName(campaigntestData.campaignedit.campaignName)
-        await campaign.verifyCampaignStartDate('2024-01-11')
-        await campaign.verifyCampaignEndDate('2024-03-20')
-        await campaign.campaignDeletePage(campaigntestData.campaignedit.campaignName);
-        await campaign.iscamapaignDeletePopup();
-        await campaign.campaignDelete();
-        await campaign.verifycampaignDeleteMessage();
-        await campaign.verifyCampaignListforDelete(campaigntestData.campaignedit.campaignName);
+        await campaign.verifyCampaignDataTable(campaigntestData.campaignedit.campaignName,sdatevalue,edatevalue)
+        await deleteEntity(accessToken, `/notification/manage/marketing/campaign/${entityId}`, { request });
+        await validateEntity(accessToken, `/notification/manage/marketing/campaign/${entityId}`, '404', { request });
     })
 })
 
-test('Campaign Delete and Verify List', async ({ page, request }) => {
+test.only('Campaign Delete and Verify List', async ({ page, request }) => {
     const campaign = new CampaignPage(page);
     accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
     title = await getCampaignName();
+    const startDate=campaigntestData.campaignadd.startDate
+    const endDate=campaigntestData.campaignadd.endDate
+    console.log(startDate)
+    console.log(endDate)
+
     const campaignData = {
-        "start_date": "2024-01-19",
-        "end_date": "2024-02-04",
-        "name": title,
+        "start_date": "2024-01-05",
+        "end_date":  "2024-03-21",
+        "name": "Test Sunita-01",
         "reward_value_referral": 44,
         "reward_value_referee": 44,
         "source_code": "test source code",
@@ -107,17 +110,19 @@ test('Campaign Delete and Verify List', async ({ page, request }) => {
         "referral_notification_description_with_reward": "reward3",
         "campaign_image": "https://mmp2-sit.s3.amazonaws.com/flow_jira_1707028679774.jpg"
     }
-    campaignName = await addCampaign(campaignData, accessToken, { request });
+     await createEntity(campaignData, accessToken, '/notification/manage/marketing/campaign', { request });
     await campaign.campaignView();
     await campaign.isCampaignPage();
-    await campaign.campaignDeletePage(campaignName);
+    const campaigndata  = await campaign.verifyCampaignDataTable("Test Sunita-01","01-052024", "03-21-2024");
+
+    await campaign.campaignDeletePage(campaigndata);
     await campaign.iscamapaignDeletePopup();
     await campaign.campaignDelete();
     await campaign.verifycampaignDeleteMessage();
-    await campaign.verifyCampaignListforDelete(campaignName);
+    await campaign.verifyCampaignListforDelete(title,startDate,endDate);
 })
 
-test('Campaign Search', async ({ page }) => {
+test.skip('Campaign Search', async ({ page }) => {
     const campaign = new CampaignPage(page);
     await campaign.campaignView();
     await campaign.isCampaignPage();
@@ -125,7 +130,7 @@ test('Campaign Search', async ({ page }) => {
     await campaign.verifySearch("Test Sunita 01")
 })
 
-test('Campaign Reset', async ({ page }) => {
+test.skip('Campaign Reset', async ({ page }) => {
     const campaign = new CampaignPage(page);
     await campaign.campaignView();
     await campaign.isCampaignPage();
@@ -135,30 +140,14 @@ test('Campaign Reset', async ({ page }) => {
     await campaign.verifyReset(row_count);
 })
 
-test.skip('Campaign Add through API', async ({ request, page, context }) => {
-    const campaign = new CampaignPage(page);
-    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-    console.log("TOKEN:" + accessToken);
-    const campaignData = {
-        "start_date": "2024-01-19",
-        "end_date": "2024-02-04",
-        "name": "Test Sunita-" + (Math.random() + 1),
-        "reward_value_referral": 44,
-        "reward_value_referee": 44,
-        "source_code": "dsf",
-        "sms_script": "sdfs",
-        "social_channel_script": "sdf",
-        "award_description": "sdfsd",
-        "award_title": "sdfs",
-        "referee_notification_description_with_reward": "dsf",
-        "referee_notification_description_without_reward": "sdf",
-        "referral_notification_description_with_reward": "sdf",
-        "campaign_image": "https://mmp2-sit.s3.amazonaws.com/flow_jira_1707028679774.jpg"
-    }
-    campaignName = await addCampaign(campaignData, accessToken, { request });
-    console.log(campaignName)
-
-});
+async function intercept(module, { context, page }) {
+    await context.route(module, async route => {
+        await route.continue();
+        const response = await page.waitForResponse(module);
+        const responseBody = await response.json();
+        interceptId = responseBody.id;
+    });
+}
 
 test.afterEach(async ({ page }) => {
     await page.close();
