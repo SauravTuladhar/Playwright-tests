@@ -16,7 +16,7 @@ exports.boUser = class boUser {
     this.phonenumber_textfield = page.locator('#bouser-phone-number')
     this.status_dropdown = page.locator('#bouser-status')
     this.status_dropdownitems = page.locator("//ul['#vs2__listbox']//li[text()='Active']")
-    this.radiobutton_Testrole = page.locator("#nuid-1")
+    this.radiobutton_Testrole = page.locator("//input[@type='radio']//following::label[text()='Test role']")
     this.save_button = page.locator('#bouser-save')
     this.cancel_button = page.locator('#bouser-cancel')
     this.toast_text = page.locator("//div[@Class='Vue-Toastification__container top-right']//div//div[@role='alert']")
