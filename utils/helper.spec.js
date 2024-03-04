@@ -432,4 +432,23 @@ async function validateEntity(accessToken, module, status, { request }) {
     expect(statusCode).toBe(parseInt(status));
 }
 
+async function updateEntity(userData, accessToken, module, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.patch(apiUrl + module, {
+        headers,
+        data: JSON.stringify(userData),
+    });
+
+    const statusCode = response.status();
+    expect(statusCode).toBe(200);
+    const responseBody = await response.json();
+    const id = responseBody.id;
+    return id;
+}
+
 module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
