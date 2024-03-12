@@ -25,49 +25,31 @@ test.describe('Jompay testcases', () => {
 
     test('Approve jompay pending transaction', async ({ page, context, request }) => {
         const jompay = new JompayPage(page);
-        /* const Data = {
-            "accounttype": 1,
-            "amount": 100,
-            "billerbankname": "STANDARD CHART. BANK",
-            "billerbanknum": "100002144",
-            "billercode": "1123",
-            "billercodename": "Maxis",
-            "channel": "3",
-            "currencycode": "MYR",
-            "debittimestamp": "2016-05-09T08:07:39.0000000+00:00",
-            "nbpsref": "3598D772",
-            "payerbankname": "AGROBANK",
-            "payerbanknum": "100033061",
-            "repeatmsg": "N",
-            "rrn": "phone_number"
+        const Data = {
+            "phone_number": "609849777665",
+            "amount": "100",
+            "jompay_bank_code": "123",
+            "jompay_transaction_id": "qwertyu12323456",
+            "status": "Pending"
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        await createEntity(Data, accessToken, '/transaction/jompay/transaction', { request }); */
+        await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
         await jompay.viewPendingTransaction({ timeout: 2000 });
-        await jompay.rejectPendingTransaction(jompayTestData.jompay.remarks, { timeout: 2000 });
+        await jompay.approvePendingTransaction(jompayTestData.jompay.remarks, { timeout: 2000 });
         await jompay.verifyApprovedTransaction();
     })
 
     test('Reject jompay pending transaction', async ({ page, request }) => {
         const jompay = new JompayPage(page);
-        /* const Data = {
-            "accounttype": 1,
-            "amount": 100,
-            "billerbankname": "STANDARD CHART. BANK",
-            "billerbanknum": "100002144",
-            "billercode": "1123",
-            "billercodename": "Maxis",
-            "channel": "3",
-            "currencycode": "MYR",
-            "debittimestamp": "2016-05-09T08:07:39.0000000+00:00",
-            "nbpsref": "3598D772",
-            "payerbankname": "AGROBANK",
-            "payerbanknum": "100033061",
-            "repeatmsg": "N",
-            "rrn": "phone_number"
+        const Data = {
+            "phone_number": "609849777665",
+            "amount": "100",
+            "jompay_bank_code": "123",
+            "jompay_transaction_id": "qwertyu123234a",
+            "status": "Pending"
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        await createEntity(Data, accessToken, '/transaction/jompay/transaction', { request }); */
+        await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
         await jompay.viewPendingTransaction({ timeout: 2000 });
         await jompay.rejectPendingTransaction(jompayTestData.jompay.remarks, { timeout: 2000 });
         await jompay.verifyRejectedTransaction();

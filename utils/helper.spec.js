@@ -391,17 +391,21 @@ async function createEntity(userData, accessToken, module, { request }) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'access-token': accessToken,
+        'sig': 'Automation',
+        //'kbn-xsrf': 'true',
     };
     const response = await request.post(apiUrl + module, {
         headers,
         data: JSON.stringify(userData),
     });
 
+    const responseBody = await response.json();
+    console.log('@@@@@@@@@@@@@@@@@@@@', responseBody);
     const statusCode = response.status();
     expect(statusCode).toBe(201);
-    const responseBody = await response.json();
-    const id = responseBody.id;
-    return id;
+    //const responseBody = await response.json();
+    //const id = responseBody.id;
+    //return id;
 }
 
 async function deleteEntity(accessToken, module, { request }) {

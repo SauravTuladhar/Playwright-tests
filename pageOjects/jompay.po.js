@@ -12,9 +12,9 @@ exports.JompayPage = class JompayPage {
         this.jompaySave = '//button[@id="whitelist-save"]';
 
         this.jompayPendingTxnSubMenu = '(//div[contains(text(),"Jompay Pending Transaction")])[1]';
-        this.viewJompayPendingTransaction = '//span[contains(text(),"Test14")]//following::a[1]';
+        this.viewJompayPendingTransaction = '//span[contains(text(),"qwertyu123234a")]//following::a[1]';
         this.addRemarks = '//input[@id="bank-name"]';
-        this.approvePendingTransaction = '//span[contains(text(),"Approve")]';
+        this.approvedPendingTransaction = '//button[contains(text(),"Approve")]';
         this.rejectedPendingTransaction = '//span[contains(text(),"Reject")]';
         this.jompayFailedTxnSubMenu = '(//div[contains(text(),"Jompay Failed Transaction")])[1]';
         this.confirm = '//button[contains(text(),"Confirm")]';
@@ -58,6 +58,12 @@ exports.JompayPage = class JompayPage {
     async viewPendingTransaction() {
         await this.page.locator(this.jompayPendingTxnSubMenu).click();
         await this.page.locator(this.viewJompayPendingTransaction).click();
+    }
+
+    async approvePendingTransaction(remarks) {
+        await this.page.locator(this.addRemarks).fill(remarks);
+        await this.page.locator(this.approvedPendingTransaction).click();
+        await this.page.locator(this.confirm).click();
     }
 
     async rejectPendingTransaction(remarks) {
