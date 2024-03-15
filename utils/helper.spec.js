@@ -400,12 +400,13 @@ async function createEntity(userData, accessToken, module, { request }) {
     });
 
     const responseBody = await response.json();
-    console.log('@@@@@@@@@@@@@@@@@@@@', responseBody);
     const statusCode = response.status();
     expect(statusCode).toBe(201);
-    //const responseBody = await response.json();
-    //const id = responseBody.id;
-    //return id;
+    if (responseBody && responseBody.id) {
+        return responseBody.id;
+    } else {
+        return null; // Or you can return any default value if ID is not present
+    }
 }
 
 async function deleteEntity(accessToken, module, { request }) {
@@ -455,4 +456,17 @@ async function updateEntity(userData, accessToken, module, { request }) {
     return id;
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
+async function getCurrentDateTimeStamp() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it is zero-based
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+}
+
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity, getCurrentDateTimeStamp };

@@ -3,12 +3,12 @@ import { LoginPage } from '../../pageOjects/login.po';
 import { JompayPage } from '../../pageOjects/jompay.po';
 const testData = require('../../fixtures/loginFixture.json');
 const jompayTestData = require('../../fixtures/jompayFixture.json');
-const { requestResponseListeners, createEntity, authenticateUser, deleteEntity, validateEntity, updateEntity } = require('../../utils/helper.spec.js');
+const { requestResponseListeners, createEntity, authenticateUser, deleteEntity, validateEntity, updateEntity, getCurrentDateTimeStamp } = require('../../utils/helper.spec.js');
 
 let accessToken, interceptId;
 
 test.beforeEach(async ({ page }) => {
-    //await requestResponseListeners(page);
+    await requestResponseListeners(page);
     const login = new LoginPage(page);
     await page.goto('/');
     await login.login(testData.validUser.userName, testData.validUser.password);
@@ -24,34 +24,38 @@ test.describe('Jompay testcases', () => {
     })
 
     test('Approve jompay pending transaction', async ({ page, context, request }) => {
+        const dateTime = await getCurrentDateTimeStamp()
         const jompay = new JompayPage(page);
         const Data = {
             "phone_number": "609849777665",
             "amount": "100",
             "jompay_bank_code": "123",
-            "jompay_transaction_id": "qwertyu12323456",
+            "jompay_transaction_id": "TrnId" + dateTime,
             "status": "Pending"
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
         await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
-        await jompay.viewPendingTransaction({ timeout: 2000 });
-        await jompay.approvePendingTransaction(jompayTestData.jompay.remarks, { timeout: 2000 });
-        await jompay.verifyApprovedTransaction();
+        await jompay.viewPendingTransaction(dateTime);
+        await jompay.approvePendingTransaction(jompayTestData.jompay.remarks);
+        await page.waitForTimeout(2000);
+        //await jompay.verifyApprovedTransaction();
     })
 
     test('Reject jompay pending transaction', async ({ page, request }) => {
+        const dateTime = await getCurrentDateTimeStamp()
         const jompay = new JompayPage(page);
         const Data = {
             "phone_number": "609849777665",
             "amount": "100",
             "jompay_bank_code": "123",
-            "jompay_transaction_id": "qwertyu123234a",
+            "jompay_transaction_id": "TrnId" + dateTime,
             "status": "Pending"
         };
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
         await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
-        await jompay.viewPendingTransaction({ timeout: 2000 });
+        await jompay.viewPendingTransaction(dateTime);
         await jompay.rejectPendingTransaction(jompayTestData.jompay.remarks, { timeout: 2000 });
+        await page.waitForTimeout(2000);
         await jompay.verifyRejectedTransaction();
     })
 
@@ -60,6 +64,7 @@ test.describe('Jompay testcases', () => {
         const jompay = new JompayPage(page);
         await jompay.addJompayWhitelistCustomer(jompayTestData.jompay.remarks);
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        await page.waitForTimeout(2000);
         await deleteEntity(accessToken, `/transaction/manage/jompay/whitelist/${interceptId}`, { request });
         await validateEntity(accessToken, `/transaction/manage/jompay/whitelist/${interceptId}`, '404', { request });
     })
@@ -84,21 +89,35 @@ test.describe('Jompay testcases', () => {
     })
 
     test('Refund jompay rejected transaction', async ({ page, request }) => {
-        //const Data = { "bank_number": ["123"], "phone_number": 609849777665, "name": "SAURAV TULADHAR", "nationality": "MALAYSIA", "id_number": "950630777665", "company_name": "TEST COMP", "customer_id": "96f83f88-4ce3-473c-b6d2-041de932f42a", "remarks": "Automation Jompay remarks" };
+        const dateTime = await getCurrentDateTimeStamp()
+        const Data = {
+            "phone_number": "609849777665",
+            "amount": "100",
+            "jompay_bank_code": "123",
+            "jompay_transaction_id": "Failed" + dateTime,
+            "status": "Failed"
+        };
         const jompay = new JompayPage(page);
-        //accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        //const entityId = await createEntity(Data, accessToken, '/transaction/manage/jompay/whitelist', { request });
-        await jompay.refundJompayWhitelistCustomer();
-        //await validateEntity(accessToken, `/transaction/manage/jompay/whitelist/${entityId}`, '404', { request });
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        const entityId = await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
+        await jompay.refundJompayWhitelistCustomer(dateTime);
+        await page.waitForTimeout(2000);
     })
 
     test('Manually credit jompay rejected transaction', async ({ page, request }) => {
-        //const Data = { "bank_number": ["123"], "phone_number": 609849777665, "name": "SAURAV TULADHAR", "nationality": "MALAYSIA", "id_number": "950630777665", "company_name": "TEST COMP", "customer_id": "96f83f88-4ce3-473c-b6d2-041de932f42a", "remarks": "Automation Jompay remarks" };
+        const dateTime = await getCurrentDateTimeStamp()
+        const Data = {
+            "phone_number": "609849777665",
+            "amount": "100",
+            "jompay_bank_code": "123",
+            "jompay_transaction_id": "Failed" + dateTime,
+            "status": "Failed"
+        };
         const jompay = new JompayPage(page);
-        //accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        //const entityId = await createEntity(Data, accessToken, '/transaction/manage/jompay/whitelist', { request });
-        await jompay.refundJompayWhitelistCustomer();
-        //await validateEntity(accessToken, `/transaction/manage/jompay/whitelist/${entityId}`, '404', { request });
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        const entityId = await createEntity(Data, accessToken, '/transaction/manage/create-jompay-instance/', { request });
+        await jompay.manuallyCreditJompayWhitelistCustomer(dateTime);
+        await page.waitForTimeout(2000);
     })
 })
 

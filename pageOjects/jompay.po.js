@@ -12,7 +12,7 @@ exports.JompayPage = class JompayPage {
         this.jompaySave = '//button[@id="whitelist-save"]';
 
         this.jompayPendingTxnSubMenu = '(//div[contains(text(),"Jompay Pending Transaction")])[1]';
-        this.viewJompayPendingTransaction = '//span[contains(text(),"qwertyu123234a")]//following::a[1]';
+        //this.viewJompayPendingTransaction = '//span[contains(text(),"TrnId")]//following::a[1]';
         this.addRemarks = '//input[@id="bank-name"]';
         this.approvedPendingTransaction = '//button[contains(text(),"Approve")]';
         this.rejectedPendingTransaction = '//span[contains(text(),"Reject")]';
@@ -27,12 +27,9 @@ exports.JompayPage = class JompayPage {
         this.SearchCustomer = '//button[@id="whitelist-search-mobile-number"]'
         this.editWhitelist = '//span[contains(text(),"609849777665")]//following::a[1]'
         this.deleteWhitelist = '//span[contains(text(),"609849777665")]//following::button[1]'
-        this.editRejectedWhitelist = '//span[contains(text(),"Test14")]//following::a[1]'
+        //this.editRejectedWhitelist = `//span[contains(text(),"Failed${dateTime}")]//following::a[1]`
         this.refundRejectedTransaction = '//button[contains(text(),"Refund")]';
         this.manuallyCreditedRejectedTransaction = '//button[contains(text(),"Manually Credit")]';
-
-
-        
     }
 
     async updateRiskRuleConfig(dailyThresholdAmount, perTxnAmount, dailyTxnCountdContactNumber, dailyThresholdAmountOverall) {
@@ -55,9 +52,10 @@ exports.JompayPage = class JompayPage {
         expect(verifyDailyThresholdAmountOverall).toBe(dailyThresholdAmountOverall);
     }
 
-    async viewPendingTransaction() {
+    async viewPendingTransaction(dateTime) {
+        const viewJompayPendingTransaction = `//span[contains(text(),"TrnId${dateTime}")]//following::a[1]`;
         await this.page.locator(this.jompayPendingTxnSubMenu).click();
-        await this.page.locator(this.viewJompayPendingTransaction).click();
+        await this.page.locator(viewJompayPendingTransaction).click();
     }
 
     async approvePendingTransaction(remarks) {
@@ -96,7 +94,7 @@ exports.JompayPage = class JompayPage {
     async editJompayWhitelistCustomer(remarks) {
         await this.page.locator(this.jompayCustomerWhitelistSubMenu).click();
         await this.page.locator(this.editWhitelist).click();
-        await this.page.locator(this.whiteListRemarks).fill(remarks+"Update");
+        await this.page.locator(this.whiteListRemarks).fill(remarks + "Update");
         await this.page.locator(this.jompaySave).click();
     }
 
@@ -106,16 +104,18 @@ exports.JompayPage = class JompayPage {
         await this.page.locator(this.confirm).click();
     }
 
-    async refundJompayWhitelistCustomer() {
+    async refundJompayWhitelistCustomer(dateTime) {
+        const editRejectedWhitelist = `//span[contains(text(),"Failed${dateTime}")]//following::a[1]`;
         await this.page.locator(this.jompayFailedTxnSubMenu).click();
-        await this.page.locator(this.editRejectedWhitelist).click();
+        await this.page.locator(editRejectedWhitelist).click();
         await this.page.locator(this.refundRejectedTransaction).click();
         await this.page.locator(this.confirm).click();
     }
 
-    async manuallyCreditJompayWhitelistCustomer() {
+    async manuallyCreditJompayWhitelistCustomer(dateTime) {
+        const editRejectedWhitelist = `//span[contains(text(),"Failed${dateTime}")]//following::a[1]`;
         await this.page.locator(this.jompayFailedTxnSubMenu).click();
-        await this.page.locator(this.editRejectedWhitelist).click();
+        await this.page.locator(editRejectedWhitelist).click();
         await this.page.locator(this.manuallyCreditedRejectedTransaction).click();
         await this.page.locator(this.confirm).click();
     }
