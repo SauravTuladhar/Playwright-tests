@@ -1,66 +1,27 @@
 name: MMP2.0-BO Tests
-
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "30 1 * * 1-5"
-  workflow_dispatch:
-
+    - cron: '30 1 * * 1-5'
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Set up Git and configure credential helper
-      - name: Set up Git and configure credential helper
-        run: |
-          git config --global user.email "saurav.tuladhar@8squarei.com"
-          git config --global user.name "sauravtuladhar8square"
-          git config --global credential.helper store
-
-      # Step 2: Provide credentials to Git
-      - name: Provide credentials to Git
-        run: echo "username=${{ secrets.USERNAME }}" | git credential approve
-
-      # Step 3: Set up SSH for GitHub
-      - name: Set up SSH for GitHub
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          eval `ssh-agent -s`  # Start the SSH agent
-          ssh-add ~/.ssh/id_rsa  # Add SSH key to the agent
-          ssh-add -l  # List the identities added
-
-      # Step 4: Checkout code using SSH
-      - name: Checkout code
-        run: git clone git@github.com:vanilla-8s/MMP2-BO-Automation.git
-
-      # Step 5: Install dependencies
-      - name: Install dependencies
-        run: npm ci
-
-      # Step 6: Install Playwright Browsers
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      # Step 7: Run Playwright tests
-      - name: Run Playwright tests
-        run: npx playwright test
-
-      # Step 8: Archive test reports
-      - name: Archive test reports
-        if: always() # Always run this step
-        run: |
-          tar -czf playwright-report.tar.gz playwright-report/
-          mv playwright-report.tar.gz $GITHUB_WORKSPACE/playwright-report.tar.gz
-
-      # Step 9: Upload test reports as artifact using REST API
-      - name: Upload test reports
-        if: always() # Always run this step
-        run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Content-Type: application/gzip" --data-binary @$GITHUB_WORKSPACE/playwright-report.tar.gz "https://api.github.com/repos/vanilla-8s/MMP2-BO-Automation/actions/artifacts?name=playwright-report"
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Run Playwright tests
+      run: npx playwright test
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
