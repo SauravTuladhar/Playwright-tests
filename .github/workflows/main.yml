@@ -32,11 +32,12 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
 
       # Step 4: Checkout code using SSH
       - name: Checkout code
-        run: git clone git@github.com:vanilla-8s/MMP2-BO-Automation.git
+        run: |
+          git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
+          git clone git@github.com:vanilla-8s/MMP2-BO-Automation.git
 
       # Step 5: Install dependencies
       - name: Install dependencies
