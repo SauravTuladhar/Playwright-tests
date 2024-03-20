@@ -14,9 +14,9 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout code manually
       - name: Checkout code
-        uses: actions/checkout@v2
+        run: git clone https://github.com/vanilla-8s/MMP2-BO-Automation.git .
 
       # Step 2: Install dependencies
       - name: Install dependencies
