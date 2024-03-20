@@ -32,7 +32,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
+          ssh-add ~/.ssh/id_rsa  # Add SSH key to the agent
 
       # Step 4: Checkout code using SSH
       - name: Checkout code
