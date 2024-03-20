@@ -34,6 +34,9 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           eval $(ssh-agent -s)  # Start the SSH agent
           ssh-add ~/.ssh/id_rsa  # Add SSH key to the agent
+          # Persist SSH agent across steps
+          echo "export SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
+          echo "export SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
 
       # Step 4: Checkout code using SSH
       - name: Checkout code
