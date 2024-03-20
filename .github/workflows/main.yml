@@ -14,30 +14,34 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Checkout code manually
+      # Step 1: Set up Git
+      - name: Set up Git
+        run: git config --global user.email "saurav.tuladhar@8squarei.com" && git config --global user.name "sauravtuladhar8square"
+
+      # Step 2: Checkout code manually
       - name: Checkout code
         run: git clone https://github.com/vanilla-8s/MMP2-BO-Automation.git .
 
-      # Step 2: Install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Step 3: Install Playwright Browsers
+      # Step 4: Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Step 4: Run Playwright tests
+      # Step 5: Run Playwright tests
       - name: Run Playwright tests
         run: npx playwright test
 
-      # Step 5: Archive test reports
+      # Step 6: Archive test reports
       - name: Archive test reports
         if: always() # Always run this step
         run: |
           tar -czf playwright-report.tar.gz playwright-report/
           mv playwright-report.tar.gz $GITHUB_WORKSPACE/playwright-report.tar.gz
 
-      # Step 6: Upload test reports as artifact using REST API
+      # Step 7: Upload test reports as artifact using REST API
       - name: Upload test reports
         if: always() # Always run this step
         run: |
