@@ -14,16 +14,16 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Set up Git
-      - name: Set up Git
+      # Step 1: Set up Git and configure credential helper
+      - name: Set up Git and configure credential helper
         run: |
           git config --global user.email "saurav.tuladhar@8squarei.com"
           git config --global user.name "sauravtuladhar8square"
           git config --global credential.helper store
 
-      # Step 2: Authenticate with GitHub
-      - name: Authenticate with GitHub
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | git credential approve
+      # Step 2: Provide credentials to Git
+      - name: Provide credentials to Git
+        run: echo "username=${{ secrets.USERNAME }}" | git credential approve
 
       # Step 3: Checkout code manually
       - name: Checkout code
