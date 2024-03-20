@@ -25,30 +25,39 @@ jobs:
       - name: Provide credentials to Git
         run: echo "username=${{ secrets.USERNAME }}" | git credential approve
 
-      # Step 3: Checkout code manually
+      # Step 3: Set up SSH for GitHub
+      - name: Set up SSH for GitHub
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global core.sshCommand "ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts"
+
+      # Step 4: Checkout code using SSH
       - name: Checkout code
         run: git clone git@github.com:vanilla-8s/MMP2-BO-Automation.git
 
-      # Step 4: Install dependencies
+      # Step 5: Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Step 5: Install Playwright Browsers
+      # Step 6: Install Playwright Browsers
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      # Step 6: Run Playwright tests
+      # Step 7: Run Playwright tests
       - name: Run Playwright tests
         run: npx playwright test
 
-      # Step 7: Archive test reports
+      # Step 8: Archive test reports
       - name: Archive test reports
         if: always() # Always run this step
         run: |
           tar -czf playwright-report.tar.gz playwright-report/
           mv playwright-report.tar.gz $GITHUB_WORKSPACE/playwright-report.tar.gz
 
-      # Step 8: Upload test reports as artifact using REST API
+      # Step 9: Upload test reports as artifact using REST API
       - name: Upload test reports
         if: always() # Always run this step
         run: |
