@@ -54,7 +54,7 @@ test('Delete the table data', async ({ page }) => {
 })
 
 
-test.describe(' API_ADD', () => {
+test.describe('Edit and Delete Test cases', () => {
     
 
   test('Edit PushNotification', async ({ page, request }) => {
