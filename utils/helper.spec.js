@@ -391,17 +391,22 @@ async function createEntity(userData, accessToken, module, { request }) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'access-token': accessToken,
+        'sig': 'Automation',
+        //'kbn-xsrf': 'true',
     };
     const response = await request.post(apiUrl + module, {
         headers,
         data: JSON.stringify(userData),
     });
 
+    const responseBody = await response.json();
     const statusCode = response.status();
     expect(statusCode).toBe(201);
-    const responseBody = await response.json();
-    const id = responseBody.id;
-    return id;
+    if (responseBody && responseBody.id) {
+        return responseBody.id;
+    } else {
+        return null; // Or you can return any default value if ID is not present
+    }
 }
 
 async function deleteEntity(accessToken, module, { request }) {
@@ -432,4 +437,36 @@ async function validateEntity(accessToken, module, status, { request }) {
     expect(statusCode).toBe(parseInt(status));
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
+async function updateEntity(userData, accessToken, module, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'access-token': accessToken,
+    };
+    const response = await request.patch(apiUrl + module, {
+        headers,
+        data: JSON.stringify(userData),
+    });
+
+    const statusCode = response.status();
+    expect(statusCode).toBe(200);
+    const responseBody = await response.json();
+    const id = responseBody.id;
+    return id;
+}
+
+async function getCurrentDateTimeStamp() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it is zero-based
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+}
+
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity, getCurrentDateTimeStamp };

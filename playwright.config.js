@@ -38,7 +38,10 @@ module.exports = defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'],
-      viewport: { width: 1920, height: 1080 },
+      launchOptions: {
+        args: ["--start-fullscreen"], // starting the browser in full screen
+      }
+      //viewport: { width: 1920, height: 1080 },
     },
     },
 
