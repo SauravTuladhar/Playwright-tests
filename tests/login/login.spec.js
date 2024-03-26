@@ -146,7 +146,7 @@ test.describe('Expired password login tests', () => {
     test('Change password using valid credentials but password expired and changing password using invalid password format', async ({ page, request, context }) => {
         const login = new LoginPage(page);
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        const userToUpdate = await getUserIdByEmail(testData.ExpiredPasswordUser.userName, context);
+        const userToUpdate = await getUserIdByEmail(testData.ExpiredPasswordUser.userName, accessToken, context);
         await forceChangePassword(userToUpdate, accessToken, true, { request });
         await updatePassword(userToUpdate, accessToken, { request });
         await passwordHistory(userToUpdate, accessToken, { request });
@@ -194,7 +194,7 @@ test.describe('Expired password login tests', () => {
         await login.changePassword(testData.ExpiredPasswordUser.currentPassword, testData.ExpiredPasswordUser.newPassword, testData.ExpiredPasswordUser.newPassword);
         await login.verifyExpiredPasswordChangedSuccess();
         accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-        const userToUpdate = await getUserIdByEmail(testData.ExpiredPasswordUser.userName, context);
+        const userToUpdate = await getUserIdByEmail(testData.ExpiredPasswordUser.userName,accessToken, context);
         await passwordHistory(userToUpdate, accessToken, { request });
         await updatePassword(userToUpdate, accessToken, { request });
     })

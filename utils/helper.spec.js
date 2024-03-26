@@ -168,7 +168,7 @@ async function deleteUser(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.delete(apiUrl + "/onboarding/manage/user/staff-user/" + userId, {
         headers: headers
@@ -184,7 +184,7 @@ async function createUser(userData, accessToken, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.post(apiUrl + "/user/staff-user", {
         headers,
@@ -196,12 +196,12 @@ async function createUser(userData, accessToken, { request }) {
     const responseBody = await response.json();
 }
 
-async function getAllUsers({ request }, username) {
+async function getAllUsers(access, { request }) {
     const apiUrl = await getApiBaseUrl();
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+access,
     };
     const response = await request.get(apiUrl + "/onboarding/manage/user/staff-user", {
         headers: headers
@@ -217,8 +217,8 @@ async function getAllUsers({ request }, username) {
     return responseBody.results; // Assuming the API response is an array of user objects
 }
 
-async function getUserIdByEmail(email, context) {
-    const allUsers = await getAllUsers(context);
+async function getUserIdByEmail(email, access, context) {
+    const allUsers = await getAllUsers(access, context);
     const usersArray = Array.isArray(allUsers) ? allUsers : [];
     const user = usersArray.find(user => user.username.toLowerCase() === email.toLowerCase());
     if (user) {
@@ -234,7 +234,7 @@ async function forceChangePassword(userId, accessToken, forceChangePassword = fa
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -253,7 +253,7 @@ async function updatePassword(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -272,7 +272,7 @@ async function passwordHistory(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -390,7 +390,7 @@ async function createEntity(userData, accessToken, module, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation',
         //'kbn-xsrf': 'true',
     };
@@ -414,7 +414,7 @@ async function deleteEntity(accessToken, module, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.delete(apiUrl + module, {
         headers,
@@ -428,7 +428,7 @@ async function validateEntity(accessToken, module, status, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.get(apiUrl + module, {
         headers,
@@ -442,7 +442,7 @@ async function updateEntity(userData, accessToken, module, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.patch(apiUrl + module, {
         headers,
