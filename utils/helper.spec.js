@@ -1,5 +1,6 @@
 const axios = require('axios');
 import { expect } from '@playwright/test';
+import { json } from 'stream/consumers';
 const fs = require('fs');
 const path = require('path');
 
@@ -198,23 +199,34 @@ async function createUser(userData, accessToken, { request }) {
 
 async function getAllUsers(access, { request }) {
     const apiUrl = await getApiBaseUrl();
-    console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': 'application/json',
         'authorization': "Bearer "+access,
     };
-    const response = await request.get(apiUrl + "/onboarding/manage/user/staff-user", {
-        headers: headers
-    });
 
-    const statusCode = response.status();
-    console.log('Actual Status Code:', statusCode);
-    if (statusCode !== 200) {
-        console.error('Failed to get users. Status code:', statusCode);
-        return null;
-    }
-    const responseBody = await response.json();
-    return responseBody.results; // Assuming the API response is an array of user objects
+    let allUsers = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    do {
+        const response = await request.get(`${apiUrl}/onboarding/manage/user/staff-user?page=${currentPage}`, {
+            headers: headers
+        });
+
+        const statusCode = response.status();
+        console.log('Actual Status Code:', statusCode);
+        if (statusCode !== 200) {
+            console.error('Failed to get users. Status code:', statusCode);
+            return null;
+        }
+        const responseBody = await response.json();
+        allUsers = allUsers.concat(responseBody.results);
+        totalPages = responseBody.pagination.pages;
+
+        currentPage++;
+    } while (currentPage <= totalPages);
+
+    return allUsers;
 }
 
 async function getUserIdByEmail(email, access, context) {
@@ -380,7 +392,7 @@ async function uploadReport() {
 async function getApiBaseUrl() {
     apiUrl = process.env.API_BASE_URL;
     if (!apiUrl) {
-        apiUrl = 'https://mmp2backenddev.vanillatech.asia';
+        apiUrl = 'https://mmp2backenddev.vanillatech.asia'; //https://mmpv2vuat.digitalmta.com //https://mmp2backenddev.vanillatech.asia
     }
     return apiUrl;
 }
@@ -419,6 +431,7 @@ async function deleteEntity(accessToken, module, { request }) {
     const response = await request.delete(apiUrl + module, {
         headers,
     });
+    console.log("###############"+JSON.stringify(response))
     const statusCode = response.status();
     expect(statusCode).toBe(204);
 }
@@ -433,6 +446,7 @@ async function validateEntity(accessToken, module, status, { request }) {
     const response = await request.get(apiUrl + module, {
         headers,
     });
+    console.log("&&&&&&&&&&&&&&&&&"+JSON.stringify(response))
     const statusCode = response.status();
     expect(statusCode).toBe(parseInt(status));
 }
