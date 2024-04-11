@@ -2,11 +2,7 @@ const { expect } = require("@playwright/test");
 const { match } = require("assert");
 const { name } = require("../playwright.config");
 const campaigntestData = JSON.parse(JSON.stringify(require('../fixtures/campaignFixture.json')));
-const moment = require('moment');
 import dayjs from 'dayjs';
-
-
-
 
 let csdate = campaigntestData.campaignadd.startDate, cedate = campaigntestData.campaignadd.endDate, updatecsdate = campaigntestData.campaignedit.updateStartDate, updatecedate = campaigntestData.campaignedit.updateEndDate
 

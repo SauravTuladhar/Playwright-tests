@@ -22,7 +22,6 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignView();
         await campaign.isCampaignPage();
     })
-
     test('Campaign Add (Field Validation)', async ({ page }) => {
         const campaign = new CampaignPage(page);
         await campaign.campaignView();
@@ -31,7 +30,6 @@ test.describe('Campaign testcases', () => {
         await campaign.campaignSave();
         await campaign.verifyAddValidationMessage();
     })
-
     test('Campaign Add and Verify List', async ({ page, context, request }) => {
         const campaign = new CampaignPage(page);
         await intercept('**/referral-campaign', { context, page });
@@ -87,89 +85,126 @@ test.describe('Campaign testcases', () => {
         await deleteEntity(accessToken, `/onboarding/manage/referral-campaign/${entityId}`, { request });
         await validateEntity(accessToken, `/onboarding/manage/referral-campaign/${entityId}`, '404', { request });
     })
-})
 
-test('Campaign Delete and Verify List', async ({ page, request }) => {
-    const campaign = new CampaignPage(page);
-    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-    title = await getCampaignName();
-    const campaignData = {
-        "start_date": "2024-04-24T11:19:00",
-        "end_date": "2024-04-30T11:19:00",
-        "name": title,
-        "reward_value_referrer": 44,
-        "reward_value_referee": 44,
-        "card_type": "ENRICH",
-        "source_code_ids": [43288],
-        "sms_script": "test sms",
-        "social_channel_script": "test social",
-        "award_description": "test desc",
-        "award_title": "test title",
-        "referee_notification_description_with_reward": "2",
-        "referral_notification_description_without_reward": "3",
-        "referral_notification_description_with_reward": "4",
-        "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": 2,
-        "terms_and_condition": null
-    }
-    await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
-    await campaign.campaignView();
-    await campaign.isCampaignPage();
-    const stDate = campaignData.start_date.slice(0, -9);
-    const enDate = campaignData.end_date.slice(0, -9);
-    const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
-    await campaign.campaignDeletePage(campaigndata);
-    await campaign.iscamapaignDeletePopup();
-    await campaign.campaignDelete();
-    await campaign.verifycampaignDeleteMessage();
-    await campaign.verifyCampaignListforDelete(title, stDate, endDate);
-})
+    test('Campaign Delete and Verify List', async ({ page, request }) => {
+        const campaign = new CampaignPage(page);
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        title = await getCampaignName();
+        const campaignData = {
+            "start_date": "2024-04-24T11:19:00",
+            "end_date": "2024-04-30T11:19:00",
+            "name": title,
+            "reward_value_referrer": 44,
+            "reward_value_referee": 44,
+            "card_type": "ENRICH",
+            "source_code_ids": [43288],
+            "sms_script": "test sms",
+            "social_channel_script": "test social",
+            "award_description": "test desc",
+            "award_title": "test title",
+            "referee_notification_description_with_reward": "2",
+            "referral_notification_description_without_reward": "3",
+            "referral_notification_description_with_reward": "4",
+            "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
+            "maximum_referral_allowed": 2,
+            "terms_and_condition": null
+        }
+        await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
+        await campaign.campaignView();
+        await campaign.isCampaignPage();
+        const stDate = campaignData.start_date.slice(0, -9);
+        const enDate = campaignData.end_date.slice(0, -9);
+        const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
+        await campaign.campaignDeletePage(campaigndata);
+        await campaign.iscamapaignDeletePopup();
+        await campaign.campaignDelete();
+        await campaign.verifycampaignDeleteMessage();
+        await campaign.verifyCampaignListforDelete(title, stDate, endDate);
+    })
+    test('Invalid Campaign Search', async ({ page }) => {
+        const campaign = new CampaignPage(page);
+        title = await getCampaignName();
+        await campaign.campaignView();
+        await campaign.isCampaignPage();
+        await campaign.campaignSearch(title)
+        await campaign.verifyInvalidSearchResult(title)
+    })
+    test('Campaign Reset', async ({ page, request }) => {
+        const campaign = new CampaignPage(page);
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        title = await getCampaignName();
+        const campaignData = {
+            "start_date": "2024-04-24T11:19:00",
+            "end_date": "2024-04-30T11:19:00",
+            "name": title,
+            "reward_value_referrer": 44,
+            "reward_value_referee": 44,
+            "card_type": "FGVON",
+            "source_code_ids": [43341],
+            "sms_script": "test sms",
+            "social_channel_script": "test social",
+            "award_description": "test desc",
+            "award_title": "test title",
+            "referee_notification_description_with_reward": "2",
+            "referral_notification_description_without_reward": "3",
+            "referral_notification_description_with_reward": "4",
+            "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
+            "maximum_referral_allowed": 4,
+            "terms_and_condition": null
+        }
+        await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
+        await campaign.campaignView();
+        await campaign.isCampaignPage();
+        const stDate = campaignData.start_date.slice(0, -9);
+        const enDate = campaignData.end_date.slice(0, -9);
+        const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
+        const row_count = await campaign.campaignSearch(title);
+        await campaign.searchReset();
+        await campaign.verifyReset(row_count);
+        await campaign.campaignDeletePage(campaigndata);
+        await campaign.iscamapaignDeletePopup();
+        await campaign.campaignDelete();
+        await campaign.verifycampaignDeleteMessage();
+        await campaign.verifyCampaignListforDelete(title, stDate, endDate);
+    })
+    test('Valid Campaign Search', async ({ page, request }) => {
+        const campaign = new CampaignPage(page);
+        accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+        title = await getCampaignName();
+        const campaignData = {
+            "start_date": "2024-04-24T11:19:00",
+            "end_date": "2024-04-30T11:19:00",
+            "name": title,
+            "reward_value_referrer": 44,
+            "reward_value_referee": 44,
+            "card_type": "AFINON",
+            "source_code_ids": [2358],
+            "sms_script": "test sms",
+            "social_channel_script": "test social",
+            "award_description": "test desc",
+            "award_title": "test title",
+            "referee_notification_description_with_reward": "2",
+            "referral_notification_description_without_reward": "3",
+            "referral_notification_description_with_reward": "4",
+            "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
+            "maximum_referral_allowed": 3,
+            "terms_and_condition": null
+        }
+        await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
+        await campaign.campaignView();
+        await campaign.isCampaignPage();
+        await campaign.campaignSearch(title)
+        const stDate = campaignData.start_date.slice(0, -9);
+        const enDate = campaignData.end_date.slice(0, -9);
+        const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
+        await campaign.verifyValidSearchResult(title)
+        await campaign.campaignDeletePage(campaigndata);
+        await campaign.iscamapaignDeletePopup();
+        await campaign.campaignDelete();
+        await campaign.verifycampaignDeleteMessage();
+        await campaign.verifyCampaignListforDelete(title, stDate, endDate);
+    })
 
-test('Invalid Campaign Search', async ({ page }) => {
-    const campaign = new CampaignPage(page);
-    title = await getCampaignName();
-    await campaign.campaignView();
-    await campaign.isCampaignPage();
-    await campaign.campaignSearch(title)
-    await campaign.verifyInvalidSearchResult(title)
-})
-test('Campaign Reset', async ({ page, request }) => {
-    const campaign = new CampaignPage(page);
-    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-    title = await getCampaignName();
-    const campaignData = {
-        "start_date": "2024-04-24T11:19:00",
-        "end_date": "2024-04-30T11:19:00",
-        "name": title,
-        "reward_value_referrer": 44,
-        "reward_value_referee": 44,
-        "card_type": "FGVON",
-        "source_code_ids": [43341],
-        "sms_script": "test sms",
-        "social_channel_script": "test social",
-        "award_description": "test desc",
-        "award_title": "test title",
-        "referee_notification_description_with_reward": "2",
-        "referral_notification_description_without_reward": "3",
-        "referral_notification_description_with_reward": "4",
-        "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": 4,
-        "terms_and_condition": null
-    }
-    await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
-    await campaign.campaignView();
-    await campaign.isCampaignPage();
-    const stDate = campaignData.start_date.slice(0, -9);
-    const enDate = campaignData.end_date.slice(0, -9);
-    const campaigndata=await campaign.verifyCampaignDataTable(title, stDate, enDate);
-    const row_count = await campaign.campaignSearch(title);
-    await campaign.searchReset();
-    await campaign.verifyReset(row_count); 
-    await campaign.campaignDeletePage(campaigndata);
-    await campaign.iscamapaignDeletePopup();
-    await campaign.campaignDelete();
-    await campaign.verifycampaignDeleteMessage();
-    await campaign.verifyCampaignListforDelete(title, stDate, endDate);
 })
 
 async function intercept(module, { context, page }) {
@@ -180,43 +215,6 @@ async function intercept(module, { context, page }) {
         interceptId = responseBody.id;
     });
 }
-test('Valid Campaign Search', async ({ page, request }) => {
-    const campaign = new CampaignPage(page);
-    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-    title = await getCampaignName();
-    const campaignData = {
-        "start_date": "2024-04-24T11:19:00",
-        "end_date": "2024-04-30T11:19:00",
-        "name": title,
-        "reward_value_referrer": 44,
-        "reward_value_referee": 44,
-        "card_type": "AFINON",
-        "source_code_ids": [2358],
-        "sms_script": "test sms",
-        "social_channel_script": "test social",
-        "award_description": "test desc",
-        "award_title": "test title",
-        "referee_notification_description_with_reward": "2",
-        "referral_notification_description_without_reward": "3",
-        "referral_notification_description_with_reward": "4",
-        "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": 3,
-        "terms_and_condition": null
-    }
-    await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
-    await campaign.campaignView();
-    await campaign.isCampaignPage();
-    await campaign.campaignSearch(title)
-    const stDate = campaignData.start_date.slice(0, -9);
-    const enDate = campaignData.end_date.slice(0, -9);
-    const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
-    await campaign.verifyValidSearchResult(title)
-    await campaign.campaignDeletePage(campaigndata);
-    await campaign.iscamapaignDeletePopup();
-    await campaign.campaignDelete();
-    await campaign.verifycampaignDeleteMessage();
-    await campaign.verifyCampaignListforDelete(title, stDate, endDate);
-})
 
 test.afterEach(async ({ page }) => {
     await page.close();
