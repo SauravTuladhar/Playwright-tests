@@ -45,7 +45,6 @@ exports.CampaignPage = class CampaignPage {
         this.campaignCreateView = '(//div[contains(text(),"Campaign: Create")])'
         this.campaignEditView = '(//div[contains(text(),"Campaign: Edit")])'
         this.campaignDeleteView = '//h2[contains(text(),"Are you sure you want to delete?")]'
-
         this.campaignSearchField = '//input[@placeholder="Search ..."]';
         this.campaignNameField = "//input[@id='campaign-name']"
         this.campaignStartDateField = '//div[@id="campaign-start-date"]//input'
