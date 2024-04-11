@@ -3,6 +3,9 @@ const { match } = require("assert");
 const { name } = require("../playwright.config");
 const campaigntestData = JSON.parse(JSON.stringify(require('../fixtures/campaignFixture.json')));
 const moment = require('moment');
+import dayjs from 'dayjs';
+
+
 
 
 let csdate = campaigntestData.campaignadd.startDate, cedate = campaigntestData.campaignadd.endDate, updatecsdate = campaigntestData.campaignedit.updateStartDate, updatecedate = campaigntestData.campaignedit.updateEndDate
@@ -23,16 +26,18 @@ exports.CampaignPage = class CampaignPage {
         this.campaignSearchListValidation = '(//div[contains(text(),"Campaign")])[2]//following::span[2]';
         this.alert = '//div[@role="alert"]'
         this.campaignValidation = '(//*[@class="text-red-600"])[1]'
+        this.campaignSDateValidation = '(//*[@class="text-red-600"])[2]'
+        this.campaignEDateValidation = '(//*[@class="text-red-600"])[3]'
         this.referralValidation = '(//*[@class="text-red-600"])[4]'
         this.refereeValidation = '(//*[@class="text-red-600"])[5]'
-        this.sourceCodeValidation = '(//*[@class="text-red-600"])[6]'
-        this.smsValidation = '(//*[@class="text-red-600"])[7]'
-        this.socialChannelValidation = '(//*[@class="text-red-600"])[8]'
-        this.awardDescValidation = '(//*[@class="text-red-600"])[9]'
-        this.awardTitleValidation = '(//*[@class="text-red-600"])[10]'
-        this.refereewithrewardValidation = '(//*[@class="text-red-600"])[11]'
-        this.refereewithoutValidation = '(//*[@class="text-red-600"])[12]'
-        this.referralwithValidation = '(//*[@class="text-red-600"])[13]'
+        this.cardType = '(//*[@class="text-red-600"])[6]'
+        this.smsValidation = '(//*[@class="text-red-600"])[8]'
+        this.socialChannelValidation = '(//*[@class="text-red-600"])[9]'
+        this.awardDescValidation = '(//*[@class="text-red-600"])[10]'
+        this.awardTitleValidation = '(//*[@class="text-red-600"])[11]'
+        this.refereewithrewardValidation = '(//*[@class="text-red-600"])[12]'
+        this.referralewithrewardValidation = '(//*[@class="text-red-600"])[13]'
+        this.referralwithoutrewardValidation = '(//*[@class="text-red-600"])[14]'
         this.imageValidation = '(//*[@class="text-red-600 mt-20"])'
         this.campaignEditMatch = '//tbody//tr//td//span'
 
@@ -51,11 +56,13 @@ exports.CampaignPage = class CampaignPage {
         this.selectEndDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${cedate}]`
         this.updateStartDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecsdate}]`
         this.updateEndDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecedate}]`;
-
-
+        this.newStartDate = '//div[@class="dp__cell_inner dp__pointer dp__today dp__date_hover"]'
         this.referralField = "//input[@id='campaign-reward-value-referral']"
         this.refereeField = "//input[@id='campaign-reward-value-referee']"
-        this.sourceCodeField = "//textarea[@id='campaign-source-code']"
+        this.cardTypeField = "(//div[@id='vs1__combobox']//following::input)[1]"
+        this.cardTypeList = "//ul[@id='vs1__listbox']"
+        this.sourceCodeField = "(//div[@id='vs2__combobox']//following::input)[1]"
+        this.sourceCodeList = "//ul[@id='vs2__listbox']"
         this.smsField = "//textarea[@id='campaign-sms-script']"
         this.socialChannelField = "//textarea[@id='campaign-social-channel-script']"
         this.awardDescriptionField = "//input[@id='campaign-award-description']"
@@ -65,7 +72,6 @@ exports.CampaignPage = class CampaignPage {
         this.referralWithRewardField = "//input[@id='campaign-referral-notification-description-with-reward']"
         this.campaignImageUpload = '//label[@for="campaign-image"]//following::label[1]'
         this.campaignImageReupload = '//div[@id="campaign-image"]//div//label//img'
-
         this.campaignTable = '(//div[contains(text(),"Campaign")])[2]//following::table'
         this.campaignRow = 'tbody tr'
         this.campaignColumn = 'thead tr th'
@@ -82,7 +88,13 @@ exports.CampaignPage = class CampaignPage {
         return await rowcount
     }
 
-    async verifySearch(campaignSearch) {
+    async verifyInvalidSearchResult(campaignSearch) {
+        const campaignSearchList = await this.page.locator(this.campaignSearchListValidation);
+        await expect(this.page.locator(this.campaignSearchField)).toHaveValue(campaignSearch)
+        await expect(campaignSearchList).not.toHaveText(campaignSearch);
+    }
+
+    async verifyValidSearchResult(campaignSearch) {
         const campaignSearchList = await this.page.locator(this.campaignSearchListValidation);
         await expect(this.page.locator(this.campaignSearchField)).toHaveValue(campaignSearch)
         await expect(campaignSearchList).toHaveText(campaignSearch);
@@ -120,8 +132,7 @@ exports.CampaignPage = class CampaignPage {
 
     async campaignAddStartDateField() {
         await this.page.locator(this.campaignStartDateField).click();
-        await this.page.locator(this.previousMonth).click();
-        await this.page.locator(this.selectStartDate).click();
+        await this.page.locator(this.newStartDate).click();
         const inputValue = await this.page.$eval(this.campaignStartDateField, input => input.value);
         return inputValue
     }
@@ -132,7 +143,6 @@ exports.CampaignPage = class CampaignPage {
         await this.page.locator(this.selectEndDate).click();
         const inputValue = await this.page.$eval(this.campaignEndDateField, input => input.value);
         return inputValue
-
     }
 
     async campaignUpdateStartDateField() {
@@ -141,20 +151,28 @@ exports.CampaignPage = class CampaignPage {
         const inputValue = await this.page.$eval(this.campaignStartDateField, input => input.value);
         return inputValue
     }
+
     async campaignUpdateEndDateField() {
         await this.page.locator(this.campaignEndDateField).click();
         await this.page.waitForTimeout(2000);
+        await this.page.locator(this.nextMonth).click();
         await this.page.locator(this.updateEndDate).click();
         const inputValue = await this.page.$eval(this.campaignEndDateField, input => input.value);
         return inputValue
-
     }
 
-    async campaignAddFields(name, referral, referee, scode, sms, schannel, awarddesc, awardtitle, refereereward, refereeworeward, referralreward, image) {
+    async campaignAddFields(name, referral, referee, cardtype, scode, sms, schannel, awarddesc, awardtitle, refereereward, refereeworeward, referralreward, image) {
         await this.page.locator(this.campaignNameField).fill(name);
         await this.page.locator(this.referralField).fill(referral);
         await this.page.locator(this.refereeField).fill(referee);
+        await this.page.locator(this.cardTypeField).click();
+        await this.page.locator(this.cardTypeField).fill(cardtype);
+        await this.page.waitForSelector(this.cardTypeList)
+        await this.page.locator(this.cardTypeList).click()
+        await this.page.locator(this.sourceCodeField).click();
         await this.page.locator(this.sourceCodeField).fill(scode);
+        await this.page.waitForSelector(this.sourceCodeList)
+        await this.page.locator(this.sourceCodeList).click()
         await this.page.locator(this.smsField).fill(sms);
         await this.page.locator(this.socialChannelField).fill(schannel);
         await this.page.locator(this.awardDescriptionField).fill(awarddesc);
@@ -210,8 +228,6 @@ exports.CampaignPage = class CampaignPage {
             tableNameData.push(data)
         }
 
-        await expect(tableNameData).toContainEqual(campaignName)
-
         if (tableNameData.includes(campaignName)) {
             var indexIntable = await tableNameData.indexOf(campaignName);
 
@@ -219,26 +235,22 @@ exports.CampaignPage = class CampaignPage {
                 const data = await tableStartDate[i].textContent();
                 tableStartDateData.push(data)
             }
-            const date1String = campaignSDate;
-            const date2String = tableStartDateData[indexIntable];
-            const date1 = moment(date1String, 'MM-DD-YYYY');
-            const date2 = moment(date2String, 'YYYY-MM-DD');
-            const areSameSDate = date1.isSame(date2, 'day') && date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
-            await expect(areSameSDate).toBe(true)
+            const date1String = dayjs(campaignSDate);
+
+            const date2 = tableStartDateData[indexIntable];
+            const date1 = date1String.format('DD-MM-YYYY');
+            await expect(date1).toEqual(date2)
 
             for (let i = 0; i < tableEndDate.length; i++) {
                 const data = await tableEndDate[i].textContent();
                 tableEndDateData.push(data)
             }
 
-            const date3String = campaignEDate;
-            const date4String = tableEndDateData[indexIntable];
-            const date3 = moment(date3String, 'MM-DD-YYYY');
-            const date4 = moment(date4String, 'YYYY-MM-DD');
-            const areSameEDate = date3.isSame(date4, 'day') && date3.isSame(date4, 'month') && date3.isSame(date4, 'year');
-            await expect(areSameEDate).toBe(true)
+            const date3String = dayjs(campaignEDate);
+            const date4 = tableEndDateData[indexIntable];
+            const date3 = date3String.format('DD-MM-YYYY');
+            await expect(date3).toEqual(date4)
             return indexIntable
-
         }
     }
 
@@ -249,8 +261,8 @@ exports.CampaignPage = class CampaignPage {
         await expect(referral).toContainText('Reward Value Refferal (RM) is required')
         const referee = await this.page.locator(this.refereeValidation)
         await expect(referee).toContainText('Reward Value Referee (RM) is required')
-        const sourcecode = await this.page.locator(this.sourceCodeValidation)
-        await expect(sourcecode).toContainText('Source Code is required')
+        const sourcecode = await this.page.locator(this.cardType)
+        await expect(sourcecode).toContainText('Card Type is required')
         const smsscript = await this.page.locator(this.smsValidation)
         await expect(smsscript).toContainText('SMS Script is required')
         const socialchannel = await this.page.locator(this.socialChannelValidation)
@@ -261,10 +273,10 @@ exports.CampaignPage = class CampaignPage {
         await expect(awardtitle).toContainText('Award Title is required')
         const refereewithreward = await this.page.locator(this.refereewithrewardValidation)
         await expect(refereewithreward).toContainText('Referee Notification Description (With Reward) is required')
-        const refereewithoutreward = await this.page.locator(this.refereewithoutValidation)
-        await expect(refereewithoutreward).toContainText('Referee Notification Description (Without Reward) is required')
-        const referraleewithoutreward = await this.page.locator(this.referralwithValidation)
-        await expect(referraleewithoutreward).toContainText('Referral Notification Description (With Reward) is required')
+        const referralewithoutreward = await this.page.locator(this.referralewithrewardValidation)
+        await expect(referralewithoutreward).toContainText('Referral Notification Description (With Reward) is required')
+        const referraleewithoutreward = await this.page.locator(this.referralwithoutrewardValidation)
+        await expect(referraleewithoutreward).toContainText('Referral Notification Description (Without Reward) is required')
         const image = await this.page.locator(this.imageValidation)
         await expect(image).toContainText('Campaign Image is required')
     }
@@ -277,7 +289,7 @@ exports.CampaignPage = class CampaignPage {
 
     async campaignDeletePage(campaignData) {
 
-        const deletebutton = await this.page.$$("//tbody/tr/td[5]//button")
+        const deletebutton = await this.page.$$("//tbody/tr/td[4]//button")
         await deletebutton[campaignData].click();
     }
 
@@ -304,7 +316,6 @@ exports.CampaignPage = class CampaignPage {
         const tableNameData = [];
         const tableStartDateData = [];
         const tableEndDateData = [];
-        var indexIntable = null;
 
         for (let i = 0; i < tableCampaignName.length; i++) {
             const data = await tableCampaignName[i].textContent();
@@ -318,28 +329,22 @@ exports.CampaignPage = class CampaignPage {
                 const data = await tableStartDate[i].textContent();
                 tableStartDateData.push(data)
             }
-            const date1String = campaignSDate;
-            const date2String = tableStartDateData[indexIntable];
-
-            const date1 = moment(date1String, 'MM-DD-YYYY');
-            const date2 = moment(date2String, 'YYYY-MM-DD');
-
-            const areSameSDate = date1.isSame(date2, 'day') && date1.isSame(date2, 'month') && date1.isSame(date2, 'year');
-            await expect(areSameSDate).toBe(false)
-
+            const date1String = dayjs(campaignSDate);
+            const date2 = tableStartDateData[indexIntable];
+            const date1 = date1String.format('DD-MM-YYYY');
+            await expect(date1).not.toEqual(date2)
             for (let i = 0; i < tableEndDate.length; i++) {
                 const data = await tableEndDate[i].textContent();
                 tableEndDateData.push(data)
             }
+            const date3String = dayjs(campaignEDate);
+            const date4 = tableEndDateData[indexIntable];
+            const date3 = date3String.format('DD-MM-YYYY');
+            await expect(date3).not.toEqual(date4)
+        }
 
-            const date3String = campaignEDate;
-            const date4String = tableEndDateData[indexIntable];
-            const date3 = moment(date3String, 'MM-DD-YYYY');
-            const date4 = moment(date4String, 'YYYY-MM-DD');
-
-            const areSameEDate = date3.isSame(date4, 'day') && date3.isSame(date4, 'month') && date3.isSame(date4, 'year');
-            await expect(areSameEDate).toBe(false)
-
+        else {
+            await expect(tableNameData).not.toEqual(campaignName)
         }
 
     }

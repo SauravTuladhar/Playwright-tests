@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 const fs = require('fs');
 const path = require('path');
 
+
 const PRACTITEST_API_KEY = 'f18e175c1920966ccd0ca3ffbaeb7930a0a471ce';
 const PROJECT_ID = '28334';
 const testSetId = '3722644';
@@ -12,7 +13,7 @@ const OWNER = 'sauravtuladhar8square';
 const REPO = 'MMP2.0-BO';
 const { parse } = require("node-html-parser");
 
-let resetPasswordLink, accessToken, deleteUserId, apiUrl
+let resetPasswordLink, accessToken, deleteUserId, apiUrl, refreshToken
 
 async function updateRun(instanceId, runStatus, apiResponse) {
     //const absolutePath = path.resolve('playwright-report/index.html');
@@ -141,25 +142,25 @@ async function extractLinkFromHtml(html) {
 }
 
 async function authenticateUser(username, password, { request }) {
-    //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/token';
-    const apiUrl = await getApiBaseUrl();
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    };
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
-    const response = await request.post(apiUrl + "/onboarding/manage/user/token", {
-        data: formData.toString(),
-        headers,
-    });
-    const statusCode = response.status();
-    expect(statusCode).toBe(200);
-    const responseBody = await response.json();
-    deleteUserId = responseBody.user.id;
-    expect(responseBody).toHaveProperty('access_token');
-    accessToken = responseBody.access_token;
-    return responseBody.access_token;
+      //const apiUrl = 'https://mmpv2vuat.digitalmta.com/manage/user/token';
+      const apiUrl = await getApiBaseUrl();
+      const headers = {
+          'Content-Type': 'application/x-www-form-urlencoded',
+      };
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+      const response = await request.post(apiUrl + "/onboarding/manage/user/token", {
+          data: formData.toString(),
+          headers,
+      });
+      const statusCode = response.status();
+      expect(statusCode).toBe(200);
+      const responseBody = await response.json();
+      deleteUserId = responseBody.user.id;
+      expect(responseBody).toHaveProperty('access_token');
+      accessToken = responseBody.access_token;
+      return responseBody.access_token;
 }
 
 async function deleteUser(userId, accessToken, { request }) {
@@ -424,18 +425,23 @@ async function createEntity(userData, accessToken, module, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
+        'sig': 'Automation',
+        //'kbn-xsrf': 'true',
     };
     const response = await request.post(apiUrl + module, {
         headers,
         data: JSON.stringify(userData),
     });
 
+    const responseBody = await response.json();
     const statusCode = response.status();
     expect(statusCode).toBe(201);
-    const responseBody = await response.json();
-    const id = responseBody.id;
-    return id;
+    if (responseBody && responseBody.id) {
+        return responseBody.id;
+    } else {
+        return null; // Or you can return any default value if ID is not present
+    }
 }
 
 async function deleteEntity(accessToken, module, { request }) {
@@ -443,7 +449,7 @@ async function deleteEntity(accessToken, module, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.delete(apiUrl + module, {
         headers,
@@ -457,7 +463,7 @@ async function validateEntity(accessToken, module, status, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.get(apiUrl + module, {
         headers,
