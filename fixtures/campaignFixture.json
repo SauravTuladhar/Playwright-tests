@@ -12,6 +12,7 @@
         "refereeWithReward": "Test with reward Automation",
         "referralWithReward": "Test with reward Automation",
         "referralWithoutReward": "Test referral without reward Automation",
+        "maxReferralAllowed": "1",
         "campaignImage": "images\\flow jira.jpg",
         "campaignSavedMessage": "Added successfully!",
         "campaignDeletedMessage": "Deleted successfully.",

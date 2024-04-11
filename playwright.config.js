@@ -25,7 +25,7 @@ module.exports = defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: 'https://mmpbodev.vanillatech.asia/login',
+    baseURL: 'https://mmpbodev.vanillatech.asia/login', //https://d5yqm4msx6uld.cloudfront.net/login //https://mmpbodev.vanillatech.asia/login //process.env.BASE_URL
     screenshot: "only-on-failure",
     video: "retain-on-failure",
 
@@ -37,7 +37,12 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { ...devices['Desktop Chrome'],
+      launchOptions: {
+        args: ["--start-fullscreen"], // starting the browser in full screen
+      }
+      //viewport: { width: 1920, height: 1080 },
+    },
     },
 
     // {

@@ -1,0 +1,9 @@
+{
+    "jompay": {
+      "dailyThresholdAmount": "1000",
+      "perTxnAmount": "300",
+      "dailyTxnCount": "20",
+      "dailyThresholdAmountOverall": "15000",
+      "remarks": "Remarks automation"
+    }
+  }

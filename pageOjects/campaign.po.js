@@ -57,19 +57,21 @@ exports.CampaignPage = class CampaignPage {
         this.updateStartDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecsdate}]`
         this.updateEndDate = `//div[@class="dp__cell_inner dp__pointer dp__date_hover"][text()=${updatecedate}]`;
         this.newStartDate = '//div[@class="dp__cell_inner dp__pointer dp__today dp__date_hover"]'
-        this.referralField = "//input[@id='campaign-reward-value-referral']"
-        this.refereeField = "//input[@id='campaign-reward-value-referee']"
-        this.cardTypeField = "(//div[@id='vs1__combobox']//following::input)[1]"
+        this.referralField = '//input[@id="campaign-reward-value-referral"]'
+        this.refereeField = '//input[@id="campaign-reward-value-referee"]'
+        this.cardTypeField = '(//div[@id="vs1__combobox"]//following::input)[1]'
         this.cardTypeList = "//ul[@id='vs1__listbox']"
-        this.sourceCodeField = "(//div[@id='vs2__combobox']//following::input)[1]"
-        this.sourceCodeList = "//ul[@id='vs2__listbox']"
-        this.smsField = "//textarea[@id='campaign-sms-script']"
-        this.socialChannelField = "//textarea[@id='campaign-social-channel-script']"
-        this.awardDescriptionField = "//input[@id='campaign-award-description']"
+        this.sourceCodeField = '(//div[@id="vs2__combobox"]//following::input)[1]'
+        this.sourceCodeList = '//ul[@id="vs2__listbox"]'
+        this.smsField = '//textarea[@id="campaign-sms-script"]'
+        this.socialChannelField = '//textarea[@id="campaign-social-channel-script"]'
+        this.awardDescriptionField = '//input[@id="campaign-award-description"]'
         this.awardTitleField = "//input[@id='campaign-award-title']"
-        this.refereeWithRewardField = "//input[@id='campaign-referee-notification-description-with-reward']"
-        this.refereeWithoutRewardField = "//input[@id='campaign-referee-notification-description-without-reward']"
-        this.referralWithRewardField = "//input[@id='campaign-referral-notification-description-with-reward']"
+        this.refereeWithRewardField = '//input[@id="campaign-referee-notification-description-with-reward"]'
+        this.refereeWithoutRewardField = '//input[@id="campaign-referee-notification-description-without-reward"]'
+        this.referralWithRewardField = '//input[@id="campaign-referral-notification-description-with-reward"]'
+        this.maxReferralAllowed = '//input[@class="input-primary mt-1"]'
+
         this.campaignImageUpload = '//label[@for="campaign-image"]//following::label[1]'
         this.campaignImageReupload = '//div[@id="campaign-image"]//div//label//img'
         this.campaignTable = '(//div[contains(text(),"Campaign")])[2]//following::table'
@@ -161,7 +163,7 @@ exports.CampaignPage = class CampaignPage {
         return inputValue
     }
 
-    async campaignAddFields(name, referral, referee, cardtype, scode, sms, schannel, awarddesc, awardtitle, refereereward, refereeworeward, referralreward, image) {
+    async campaignAddFields(name, referral, referee, cardtype, scode, sms, schannel, awarddesc, awardtitle, refereereward, refereeworeward, referralreward, maxallowed, image) {
         await this.page.locator(this.campaignNameField).fill(name);
         await this.page.locator(this.referralField).fill(referral);
         await this.page.locator(this.refereeField).fill(referee);
@@ -180,6 +182,7 @@ exports.CampaignPage = class CampaignPage {
         await this.page.locator(this.refereeWithRewardField).fill(refereereward);
         await this.page.locator(this.refereeWithoutRewardField).fill(refereeworeward);
         await this.page.locator(this.referralWithRewardField).fill(referralreward);
+        await this.page.locator(this.maxReferralAllowed).fill(maxallowed);
         await this.page.locator(this.campaignImageUpload).click();
         await this.page.locator(this.campaignImageUpload).setInputFiles(image);
         await this.page.waitForTimeout(2000);

@@ -41,7 +41,7 @@ test.describe('Campaign testcases', () => {
         await campaign.iscampaignAddPage();
         const sdateValue = await campaign.campaignAddStartDateField();
         const edateValue = await campaign.campaignAddEndDateField();
-        await campaign.campaignAddFields(campaigntestData.campaignadd.campaignName, campaigntestData.campaignadd.referral, campaigntestData.campaignadd.referee, campaigntestData.campaignadd.cardType, campaigntestData.campaignadd.sourceCode, campaigntestData.campaignadd.sms, campaigntestData.campaignadd.socialChannel, campaigntestData.campaignadd.awardDescription, campaigntestData.campaignadd.awardTitle, campaigntestData.campaignadd.refereeWithReward, campaigntestData.campaignadd.referralWithReward, campaigntestData.campaignadd.referralWithoutReward, campaigntestData.campaignadd.campaignImage);
+        await campaign.campaignAddFields(campaigntestData.campaignadd.campaignName, campaigntestData.campaignadd.referral, campaigntestData.campaignadd.referee, campaigntestData.campaignadd.cardType, campaigntestData.campaignadd.sourceCode, campaigntestData.campaignadd.sms, campaigntestData.campaignadd.socialChannel, campaigntestData.campaignadd.awardDescription, campaigntestData.campaignadd.awardTitle, campaigntestData.campaignadd.refereeWithReward, campaigntestData.campaignadd.referralWithReward, campaigntestData.campaignadd.referralWithoutReward, campaigntestData.campaignadd.maxReferralAllowed, campaigntestData.campaignadd.campaignImage);
         await campaign.campaignSave();
         await campaign.verifyAddSuccessMessage();
         await campaign.verifyCampaignDataTable(campaigntestData.campaignadd.campaignName, sdateValue, edateValue)
@@ -69,7 +69,7 @@ test.describe('Campaign testcases', () => {
             "referral_notification_description_without_reward": "3",
             "referral_notification_description_with_reward": "4",
             "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-            "maximum_referral_allowed": null,
+            "maximum_referral_allowed": 5,
             "terms_and_condition": null
         }
         const entityId = await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
@@ -80,7 +80,7 @@ test.describe('Campaign testcases', () => {
         const sdatevalue = await campaign.campaignUpdateStartDateField();
         const edatevalue = await campaign.campaignUpdateEndDateField();
         const name = await getUpdatedCampaignName()
-        await campaign.campaignAddFields(name, campaigntestData.campaignadd.referral, campaigntestData.campaignadd.referee, campaigntestData.campaignadd.cardType, campaigntestData.campaignadd.sourceCode, campaigntestData.campaignadd.sms, campaigntestData.campaignadd.socialChannel, campaigntestData.campaignadd.awardDescription, campaigntestData.campaignadd.awardTitle, campaigntestData.campaignadd.refereeWithReward, campaigntestData.campaignadd.referralWithReward, campaigntestData.campaignadd.referralWithoutReward, campaigntestData.campaignadd.campaignImage);
+        await campaign.campaignAddFields(name, campaigntestData.campaignadd.referral, campaigntestData.campaignadd.referee, campaigntestData.campaignadd.cardType, campaigntestData.campaignadd.sourceCode, campaigntestData.campaignadd.sms, campaigntestData.campaignadd.socialChannel, campaigntestData.campaignadd.awardDescription, campaigntestData.campaignadd.awardTitle, campaigntestData.campaignadd.refereeWithReward, campaigntestData.campaignadd.referralWithReward, campaigntestData.campaignadd.referralWithoutReward, campaigntestData.campaignadd.maxReferralAllowed, campaigntestData.campaignadd.campaignImage);
         await campaign.campaignSave();
         await campaign.verifyEditSuccessMessage();
         await campaign.verifyCampaignDataTable(name, sdatevalue, edatevalue)
@@ -109,7 +109,7 @@ test('Campaign Delete and Verify List', async ({ page, request }) => {
         "referral_notification_description_without_reward": "3",
         "referral_notification_description_with_reward": "4",
         "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": null,
+        "maximum_referral_allowed": 2,
         "terms_and_condition": null
     }
     await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
@@ -133,45 +133,6 @@ test('Invalid Campaign Search', async ({ page }) => {
     await campaign.campaignSearch(title)
     await campaign.verifyInvalidSearchResult(title)
 })
-
-test('Valid Campaign Search', async ({ page, request }) => {
-    const campaign = new CampaignPage(page);
-    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
-    title = await getCampaignName();
-    const campaignData = {
-        "start_date": "2024-04-24T11:19:00",
-        "end_date": "2024-04-30T11:19:00",
-        "name": title,
-        "reward_value_referrer": 44,
-        "reward_value_referee": 44,
-        "card_type": "CMSTON",
-        "source_code_ids": [43336],
-        "sms_script": "test sms",
-        "social_channel_script": "test social",
-        "award_description": "test desc",
-        "award_title": "test title",
-        "referee_notification_description_with_reward": "2",
-        "referral_notification_description_without_reward": "3",
-        "referral_notification_description_with_reward": "4",
-        "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": null,
-        "terms_and_condition": null
-    }
-    await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
-    await campaign.campaignView();
-    await campaign.isCampaignPage();
-    await campaign.campaignSearch(title)
-    const stDate = campaignData.start_date.slice(0, -9);
-    const enDate = campaignData.end_date.slice(0, -9);
-    const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
-    await campaign.verifyValidSearchResult(title)
-    await campaign.campaignDeletePage(campaigndata);
-    await campaign.iscamapaignDeletePopup();
-    await campaign.campaignDelete();
-    await campaign.verifycampaignDeleteMessage();
-    await campaign.verifyCampaignListforDelete(title, stDate, endDate);
-})
-
 test('Campaign Reset', async ({ page, request }) => {
     const campaign = new CampaignPage(page);
     accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
@@ -192,7 +153,7 @@ test('Campaign Reset', async ({ page, request }) => {
         "referral_notification_description_without_reward": "3",
         "referral_notification_description_with_reward": "4",
         "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
-        "maximum_referral_allowed": null,
+        "maximum_referral_allowed": 4,
         "terms_and_condition": null
     }
     await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
@@ -219,6 +180,43 @@ async function intercept(module, { context, page }) {
         interceptId = responseBody.id;
     });
 }
+test('Valid Campaign Search', async ({ page, request }) => {
+    const campaign = new CampaignPage(page);
+    accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
+    title = await getCampaignName();
+    const campaignData = {
+        "start_date": "2024-04-24T11:19:00",
+        "end_date": "2024-04-30T11:19:00",
+        "name": title,
+        "reward_value_referrer": 44,
+        "reward_value_referee": 44,
+        "card_type": "CMSTON",
+        "source_code_ids": [43336],
+        "sms_script": "test sms",
+        "social_channel_script": "test social",
+        "award_description": "test desc",
+        "award_title": "test title",
+        "referee_notification_description_with_reward": "2",
+        "referral_notification_description_without_reward": "3",
+        "referral_notification_description_with_reward": "4",
+        "campaign_image": "https://d3pr0ddcj2iamd.cloudfront.net/Screenshot_2024-01-17_at_20.39.04_1712734134973.png",
+        "maximum_referral_allowed": 3,
+        "terms_and_condition": null
+    }
+    await createEntity(campaignData, accessToken, '/onboarding/manage/referral-campaign', { request });
+    await campaign.campaignView();
+    await campaign.isCampaignPage();
+    await campaign.campaignSearch(title)
+    const stDate = campaignData.start_date.slice(0, -9);
+    const enDate = campaignData.end_date.slice(0, -9);
+    const campaigndata = await campaign.verifyCampaignDataTable(title, stDate, enDate);
+    await campaign.verifyValidSearchResult(title)
+    await campaign.campaignDeletePage(campaigndata);
+    await campaign.iscamapaignDeletePopup();
+    await campaign.campaignDelete();
+    await campaign.verifycampaignDeleteMessage();
+    await campaign.verifyCampaignListforDelete(title, stDate, endDate);
+})
 
 test.afterEach(async ({ page }) => {
     await page.close();

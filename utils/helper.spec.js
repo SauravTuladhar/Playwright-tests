@@ -1,5 +1,6 @@
 const axios = require('axios');
 import { expect } from '@playwright/test';
+import { json } from 'stream/consumers';
 const fs = require('fs');
 const path = require('path');
 
@@ -13,7 +14,7 @@ const OWNER = 'sauravtuladhar8square';
 const REPO = 'MMP2.0-BO';
 const { parse } = require("node-html-parser");
 
-let resetPasswordLink, accessToken, deleteUserId, apiUrl, refreshToken
+let resetPasswordLink, accessToken, deleteUserId, apiUrl
 
 async function updateRun(instanceId, runStatus, apiResponse) {
     //const absolutePath = path.resolve('playwright-report/index.html');
@@ -169,7 +170,7 @@ async function deleteUser(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.delete(apiUrl + "/onboarding/manage/user/staff-user/" + userId, {
         headers: headers
@@ -185,7 +186,7 @@ async function createUser(userData, accessToken, { request }) {
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
     };
     const response = await request.post(apiUrl + "/user/staff-user", {
         headers,
@@ -230,29 +231,41 @@ async function getUpdatedCampaignName() {
     return title;
 }
 
-async function getAllUsers({ request }, username) {
+async function getAllUsers(access, { request }) {
     const apiUrl = await getApiBaseUrl();
-    console.log('API Base URL:', apiUrl);
     const headers = {
+        'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'access-token': accessToken,
+        'authorization': "Bearer "+access,
     };
-    const response = await request.get(apiUrl + "/onboarding/manage/user/staff-user", {
-        headers: headers
-    });
 
-    const statusCode = response.status();
-    console.log('Actual Status Code:', statusCode);
-    if (statusCode !== 200) {
-        console.error('Failed to get users. Status code:', statusCode);
-        return null;
-    }
-    const responseBody = await response.json();
-    return responseBody.results; // Assuming the API response is an array of user objects
+    let allUsers = [];
+    let currentPage = 1;
+    let totalPages = 1;
+
+    do {
+        const response = await request.get(`${apiUrl}/onboarding/manage/user/staff-user?page=${currentPage}`, {
+            headers: headers
+        });
+
+        const statusCode = response.status();
+        console.log('Actual Status Code:', statusCode);
+        if (statusCode !== 200) {
+            console.error('Failed to get users. Status code:', statusCode);
+            return null;
+        }
+        const responseBody = await response.json();
+        allUsers = allUsers.concat(responseBody.results);
+        totalPages = responseBody.pagination.pages;
+
+        currentPage++;
+    } while (currentPage <= totalPages);
+
+    return allUsers;
 }
 
-async function getUserIdByEmail(email, context) {
-    const allUsers = await getAllUsers(context);
+async function getUserIdByEmail(email, access, context) {
+    const allUsers = await getAllUsers(access, context);
     const usersArray = Array.isArray(allUsers) ? allUsers : [];
     const user = usersArray.find(user => user.username.toLowerCase() === email.toLowerCase());
     if (user) {
@@ -268,7 +281,7 @@ async function forceChangePassword(userId, accessToken, forceChangePassword = fa
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -287,7 +300,7 @@ async function updatePassword(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -306,7 +319,7 @@ async function passwordHistory(userId, accessToken, { request }) {
     console.log('API Base URL:', apiUrl);
     const headers = {
         'Accept': '*/*',
-        'access-token': accessToken,
+        'authorization': "Bearer "+accessToken,
         'sig': 'Automation'
     };
     const response = await request.patch(apiUrl + "/onboarding/manage/staff-user-automation/" + userId, {
@@ -414,12 +427,10 @@ async function uploadReport() {
 async function getApiBaseUrl() {
     apiUrl = process.env.API_BASE_URL;
     if (!apiUrl) {
-        apiUrl = 'https://mmp2backenddev.vanillatech.asia';
+        apiUrl = 'https://mmp2backenddev.vanillatech.asia'; //https://mmpv2vuat.digitalmta.com //https://mmp2backenddev.vanillatech.asia
     }
     return apiUrl;
 }
-
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, addCampaign,getCampaignName, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport };
 async function createEntity(userData, accessToken, module, { request }) {
     const apiUrl = await getApiBaseUrl();
     const headers = {
@@ -454,6 +465,7 @@ async function deleteEntity(accessToken, module, { request }) {
     const response = await request.delete(apiUrl + module, {
         headers,
     });
+    console.log("###############"+JSON.stringify(response))
     const statusCode = response.status();
     expect(statusCode).toBe(204);
 }
@@ -468,8 +480,41 @@ async function validateEntity(accessToken, module, status, { request }) {
     const response = await request.get(apiUrl + module, {
         headers,
     });
+    console.log("&&&&&&&&&&&&&&&&&"+JSON.stringify(response))
     const statusCode = response.status();
     expect(statusCode).toBe(parseInt(status));
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, getCampaignName, getUpdatedCampaignName, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity };
+async function updateEntity(userData, accessToken, module, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': "Bearer "+accessToken,
+    };
+    const response = await request.patch(apiUrl + module, {
+        headers,
+        data: JSON.stringify(userData),
+    });
+
+    const statusCode = response.status();
+    expect(statusCode).toBe(200);
+    const responseBody = await response.json();
+    const id = responseBody.id;
+    return id;
+}
+
+async function getCurrentDateTimeStamp() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it is zero-based
+    const day = now.getDate().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+}
+
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, getCampaignName, getUpdatedCampaignName, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity, getCurrentDateTimeStamp};
