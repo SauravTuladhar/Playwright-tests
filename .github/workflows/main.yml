@@ -7,6 +7,8 @@ on:
   schedule:
     - cron: '30 1 * * 1-5'
   workflow_dispatch:
+  repository_dispatch:
+    types: [trigger-workflow]
 jobs:
   test:
     timeout-minutes: 60
