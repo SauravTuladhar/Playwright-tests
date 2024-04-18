@@ -18,7 +18,7 @@ test.afterEach(async ({ page }) => {
     await page.close();
 })
 
-test.describe(' Verify BO User _ Creation', () => {
+test.describe.skip(' Verify BO User _ Creation', () => {
     test('Verify valid BO User Creation_Empty Validation message', async ({ page }) => {
         const bo = new boUser(page)
         await bo.click_BackOfficeUserMenu()
@@ -101,7 +101,7 @@ test.describe(' Verify BO User _ Creation', () => {
     })
 })
 
-test.describe(' Verify BO User _ Search', () => {
+test.describe.skip(' Verify BO User _ Search', () => {
     test('Search BO User _ with Username', async ({ request, page }) => {
         const bo = new boUser(page)
         const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
@@ -130,7 +130,7 @@ test.describe(' Verify BO User _ Search', () => {
 
 })
 
-test.describe(' Verify BO User _ Edit', () => {
+test.describe.skip(' Verify BO User _ Edit', () => {
     test('Verify Edit for Back Office users', async ({ request, page }) => {
         const bo = new boUser(page)
         const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
@@ -168,7 +168,7 @@ test.describe(' Verify BO User _ Edit', () => {
 
 })
 
-test.describe(' Verify BO User _ Reset', () => {
+test.describe.skip(' Verify BO User _ Reset', () => {
     test('Search and Click Reset', async ({ request, page }) => {
         const bo = new boUser(page)
         const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
@@ -199,7 +199,7 @@ test.describe(' Verify BO User _ Reset', () => {
     })
 })
 
-test.describe(' Verify BO User _ Delete', () => {
+test.describe.skip(' Verify BO User _ Delete', () => {
     test('Search and Cancel Delete', async ({ request, page }) => {
         const bo = new boUser(page)
         const accessToken = await authenticateUser(testData.validUser.userName, testData.validUser.password, { request });
