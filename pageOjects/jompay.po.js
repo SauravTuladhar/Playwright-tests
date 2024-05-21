@@ -22,7 +22,7 @@ exports.JompayPage = class JompayPage {
         this.jompayWhitelistAddButton = '//span[contains(text(),"Add")]';
         this.mobileNumber = '//input[@name="mobile"]'
         this.payerBankDropdown = '//div[@class="vs__actions"]'
-        this.selectPayerBank = '//li[@id="vs1__option-1"]'
+        this.selectPayerBank = '//li[@id="vs3__option-0"]'
         this.whiteListRemarks = '//input[@id="whitelist-remarks"]';
         this.SearchCustomer = '//button[@id="whitelist-search-mobile-number"]'
         this.editWhitelist = '//span[contains(text(),"609849777665")]//following::a[1]'
