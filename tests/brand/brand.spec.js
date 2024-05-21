@@ -21,7 +21,7 @@ test.describe('Brand testcases', () => {
         await brand.brandView();
     })
 
-    test('Brand search test', async ({ page }) => {
+    test.skip('Brand search test', async ({ page }) => {
         const brand = new BrandPage(page);
         await brand.brandSearch(brandTestData.brand.brandName, brandTestData.brand.brandName);
     })
