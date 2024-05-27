@@ -470,6 +470,62 @@ async function updateEntity(userData, accessToken, module, { request }) {
     return id;
 }
 
+/* async function getEntityId(accessToken, module, status, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': "Bearer "+accessToken,
+    };
+    const response = await request.get(apiUrl + module, {
+        headers,
+    });
+    const statusCode = response.status();
+    expect(statusCode).toBe(parseInt(status));
+    const responseBody = await response.json();
+    console.log("@@@@@@@@@@@@@@@@@"+ JSON.stringify(responseBody))
+    const id = responseBody.id;
+    console.log("$$$$$$$$$$$$$$$"+ id)
+    return id;
+} */
+
+async function getEntityId(accessToken, module, status, currency, { request }) {
+    const apiUrl = await getApiBaseUrl();
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'authorization': "Bearer " + accessToken,
+    };
+
+    let id = null;
+    let totalCount = 0;
+
+    let currentPage = 1;
+    while (true) {
+        const response = await request.get(apiUrl + module + `?page=${currentPage}`, {
+            headers,
+        });
+        const statusCode = response.status();
+        expect(statusCode).toBe(parseInt(status));
+        const responseBody = await response.json();
+
+        totalCount += responseBody.pagination.count;
+
+        responseBody.results.forEach((result) => {
+            if (result.currency && result.currency.name === currency) { 
+                id = result.id;
+                return;
+            }
+        });
+
+        if (currentPage >= responseBody.pagination.pages) {
+            break; 
+        }
+        currentPage++;
+    }
+    return id;
+}
+
 async function getCurrentDateTimeStamp() {
     const now = new Date();
 
@@ -483,4 +539,4 @@ async function getCurrentDateTimeStamp() {
     return `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
 }
 
-module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity, getCurrentDateTimeStamp };
+module.exports = { updateRun, requestResponseListeners, getEmails, extractLinkFromHtml, authenticateUser, deleteUser, createUser, getAllUsers, getUserIdByEmail, forceChangePassword, updatePassword, passwordHistory, uploadReportToTestSet, uploadReport, createEntity, deleteEntity, validateEntity, getCurrentDateTimeStamp, getEntityId };
