@@ -4,6 +4,7 @@ const { expect } = require("@playwright/test");
 exports.JompayPage = class JompayPage {
     constructor(page) {
         this.page = page;
+        this.jompayModule = '//div[contains(text(),"Jompay")]';
         this.riskRuleConfigSubMenu = '(//div[contains(text(),"Jompay Risk Rule Configuration")])[1]';
         this.dailyThresholdAmountField = '//input[@data-test-id="daily_threshold_amount"]';
         this.perTxnAmount = '//input[@data-test-id="per_transaction_amount"]';
@@ -30,6 +31,10 @@ exports.JompayPage = class JompayPage {
         //this.editRejectedWhitelist = `//span[contains(text(),"Failed${dateTime}")]//following::a[1]`
         this.refundRejectedTransaction = '//button[contains(text(),"Refund")]';
         this.manuallyCreditedRejectedTransaction = '//button[contains(text(),"Manually Credit")]';
+    }
+
+    async selectModule() {
+        await this.page.locator(this.jompayModule).click();
     }
 
     async updateRiskRuleConfig(dailyThresholdAmount, perTxnAmount, dailyTxnCountdContactNumber, dailyThresholdAmountOverall) {

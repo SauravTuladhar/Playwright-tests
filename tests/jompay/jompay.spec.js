@@ -10,9 +10,11 @@ let accessToken, interceptId;
 test.beforeEach(async ({ page }) => {
     await requestResponseListeners(page);
     const login = new LoginPage(page);
+    const jompay = new JompayPage(page);
     await page.goto('/');
     await login.login(testData.validUser.userName, testData.validUser.password);
     await login.verifyValidLogin();
+    await jompay.selectModule();
 })
 
 test.describe('Jompay testcases', () => {

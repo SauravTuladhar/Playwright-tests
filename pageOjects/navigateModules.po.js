@@ -5,6 +5,7 @@ exports.NavigateModules = class NavigateModules {
     constructor(page) {
         this.page = page;
         this.sideMenuList = '//aside//following::a';
+        this.sideMenuModuleList = '//aside//following::div[6]/div/div';
     }
 
     async sideMenu() {
@@ -12,4 +13,8 @@ exports.NavigateModules = class NavigateModules {
         return menuItems;
     }
 
+    async sideMenuModule() {
+        const moduleMenuItems = await this.page.$$(this.sideMenuModuleList);
+        return moduleMenuItems;
+    }
 }
