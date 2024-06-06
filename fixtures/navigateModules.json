@@ -1,222 +1,242 @@
-[
-    {
-        "module": "Profile Sync",
-        "url": "/support/profile-sync"
-    },
-    {
-        "module": "Invalid Profile",
-        "url": "/support/invalid-profile"
-    },
-    {
-        "module": "Push Notification",
-        "url": "/marketing/push-notification"
-    },
-    {
-        "module": "Campaign",
-        "url": "/marketing/campaign"
-    },
-    {
-        "module": "Message Alert",
-        "url": "/marketing/message-alert"
-    },
-    {
-        "module": "Digital Money Packet",
-        "url": "/marketing/efestive"
-    },
-    {
-        "module": "Currency",
-        "url": "/setup/currency"
-    },
-    {
-        "module": "Country",
-        "url": "/setup/country"
-    },
-    {
-        "module": "Brand",
-        "url": "/setup/brand"
-    },
-    {
-        "module": "AmBank Account Setting",
-        "url": "/setup/ambank-account-setup/account-setting"
-    },
-    {
-        "module": "Bank",
-        "url": "/setup/bank"
-    },
-    {
-        "module": "Card",
-        "url": "/setup/card"
-    },
-    {
-        "module": "Language",
-        "url": "/setup/language"
-    },
-    {
-        "module": "Online Registration Setup",
-        "url": "/setup/online-registration-setup/configuration"
-    },
-    {
-        "module": "Topup Other Channels Setup",
-        "url": "/setup/topup-other-channels-setup"
-    },
-    {
-        "module": "Card Type Configuration",
-        "url": "/setup/card-type"
-    },
-    {
-        "module": "E-Terminal",
-        "url": "/setup/e-terminal"
-    },
-    {
-        "module": "Service Fee",
-        "url": "/setup/service-fee"
-    },
-    {
-        "module": "Transaction Auth Configuration",
-        "url": "/setup/transaction-auth-configuration"
-    },
-    {
-        "module": "Back-Office User",
-        "url": "/user-management/bouser"
-    },
-    {
-        "module": "Customer",
-        "url": "/user-management/customer"
-    },
-    {
-        "module": "Customer App Status",
-        "url": "/user-management/customer-app-status/locked-customer"
-    },
-    {
-        "module": "BlackList Referral Code",
-        "url": "/user-management/blacklist-referral-code"
-    },
-    {
-        "module": "Role",
-        "url": "/role-management"
-    },
-    {
-        "module": "Jompay Transaction",
-        "url": "/jompay/transaction"
-    },
-    {
-        "module": "Jompay Failed Transaction",
-        "url": "/jompay/failed-transaction"
-    },
-    {
-        "module": "Jompay Pending Transaction",
-        "url": "/jompay/pending-transaction"
-    },
-    {
-        "module": "Jompay Customer Whitelist",
-        "url": "/jompay/customer-whitelist"
-    },
-    {
-        "module": "Jompay Risk Rule Configuration",
-        "url": "/jompay/risk-rule-configuration"
-    },
-    {
-        "module": "Virtual Buffer Setup",
-        "url": "/virtual-inventory/currency-buffer"
-    },
-    {
-        "module": "Virtual Inventory Setup",
-        "url": "/virtual-inventory/setup"
-    },
-    {
-        "module": "Virtual Stock Inventory",
-        "url": "/virtual-inventory/stock"
-    },
-    {
-        "module": "Agent",
-        "url": "/agent-management/agent"
-    },
-    {
-        "module": "Branch",
-        "url": "/agent-management/branch"
-    },
-    {
-        "module": "Merchant(Direct API)",
-        "url": "/agent-management/merchant"
-    },
-    {
-        "module": "Eligibility",
-        "url": "/duitnow/eligibility"
-    },
-    {
-        "module": "Global Account Transfer Limit",
-        "url": "/duitnow/global-account-transfer-limit/duitnow-transfer-proxy-global-limit"
-    },
-    {
-        "module": "Virtual Stock Inventory",
-        "url": "/virtual-inventory/stock"
-    },
-    {
-        "module": "Agent",
-        "url": "/agent-management/agent"
-    },
-    {
-        "module": "Branch",
-        "url": "/agent-management/branch"
-    },
-    {
-        "module": "Merchant(Direct API)",
-        "url": "/agent-management/merchant"
-    },
-    {
-        "module": "Eligibility",
-        "url": "/duitnow/eligibility"
-    },
-    {
-        "module": "Global Account Transfer Limit",
-        "url": "/duitnow/global-account-transfer-limit/duitnow-transfer-proxy-global-limit"
-    },
-    {
-        "module": "White list",
-        "url": "/device/white-list"
-    },
-    {
-        "module": "Locked Account",
-        "url": "/device/locked"
-    },
-    {
-        "module": "Block Mobile/Device",
-        "url": "/device/block"
-    },
-    {
-        "module": "User Login Record",
-        "url": "/device/user-login-record"
-    },
-    {
-        "module": "Pending List",
-        "url": "/device/pendinglist"
-    },
-    {
-        "module": "Merchant Voucher Image",
-        "url": "/merchant-management/merchant-voucher-image"
-    },
-    {
-        "module": "Merchant Account Topup",
-        "url": "/merchant-management/merchant-account-topup"
-    },
-    {
-        "module": "Merchant Detail",
-        "url": "/merchant-management/merchant-detail"
-    },
-    {
-        "module": "Pending Transaction",
-        "url": "/merchant-management/pending-transaction"
-    },
-    {
-        "module": "Last 7 days Transaction",
-        "url": "/merchant-management/seven-days-transaction"
-    },
-    {
-        "module": "Set Rate",
-        "url": "/rate-management/set"
-    },
-    {
-        "module": "Approve Rate",
-        "url": "/rate-management/approve"
-    }
-]
+{
+    "Support": [
+        {
+            "module": "Profile Sync",
+            "url": "/support/profile-sync"
+        },
+        {
+            "module": "Invalid Profile",
+            "url": "/support/invalid-profile"
+        }
+    ],
+    "Marketing": [
+        {
+            "module": "Push Notification",
+            "url": "/marketing/push-notification"
+        },
+        {
+            "module": "Campaign",
+            "url": "/marketing/campaign"
+        },
+        {
+            "module": "Message Alert",
+            "url": "/marketing/message-alert"
+        },
+        {
+            "module": "Digital Money Packet",
+            "url": "/marketing/efestive"
+        },
+        {
+            "module": "Banner",
+            "url": "/marketing/banner"
+        }
+    ],
+    "Setup": [
+        {
+            "module": "Setting",
+            "url": "/setup/settings/configuration"
+        },
+        {
+            "module": "Currency",
+            "url": "/setup/currency"
+        },
+        {
+            "module": "Country",
+            "url": "/setup/country"
+        },
+        {
+            "module": "Brand",
+            "url": "/setup/brand"
+        },
+        {
+            "module": "Document Update",
+            "url": "/setup/document-update"
+        },
+        {
+            "module": "Configuration 20k",
+            "url": "/setup/configuration-20k"
+        },
+        {
+            "module": "AmBank Account Setting",
+            "url": "/setup/ambank-account-setup/account-setting"
+        },
+        {
+            "module": "Card",
+            "url": "/setup/card"
+        },
+        {
+            "module": "Language",
+            "url": "/setup/language"
+        },
+        {
+            "module": "Bank",
+            "url": "/setup/bank"
+        },
+        {
+            "module": "Online Registration Setup",
+            "url": "/setup/online-registration-setup/configuration"
+        },
+        {
+            "module": "Topup Other Channels Setup",
+            "url": "/setup/topup-other-channels-setup"
+        },
+        {
+            "module": "Card Type Configuration",
+            "url": "/setup/card-type"
+        },
+        {
+            "module": "E-Terminal",
+            "url": "/setup/e-terminal"
+        },
+        {
+            "module": "Service Fee",
+            "url": "/setup/service-fee"
+        },
+        {
+            "module": "Transaction Auth Configuration",
+            "url": "/setup/transaction-auth-configuration"
+        }
+    ],
+    "User Management": [
+        {
+            "module": "Back-Office User",
+            "url": "/user-management/bouser"
+        },
+        {
+            "module": "Customer",
+            "url": "/user-management/customer"
+        },
+        {
+            "module": "Customer App Status",
+            "url": "/user-management/customer-app-status/locked-customer"
+        },
+        {
+            "module": "BlackList Referral Code",
+            "url": "/user-management/blacklist-referral-code"
+        }
+    ],
+    "Role Management": [
+        {
+            "module": "Role",
+            "url": "/role-management"
+        }
+    ],
+    "Jompay": [
+        {
+            "module": "Jompay Transaction",
+            "url": "/jompay/transaction"
+        },
+        {
+            "module": "Jompay Failed Transaction",
+            "url": "/jompay/failed-transaction"
+        },
+        {
+            "module": "Jompay Pending Transaction",
+            "url": "/jompay/pending-transaction"
+        },
+        {
+            "module": "Jompay Customer Whitelist",
+            "url": "/jompay/customer-whitelist"
+        },
+        {
+            "module": "Jompay Risk Rule Configuration",
+            "url": "/jompay/risk-rule-configuration"
+        }
+    ],
+    "Virtual Inventory": [
+        {
+            "module": "Virtual Buffer Setup",
+            "url": "/virtual-inventory/currency-buffer"
+        },
+        {
+            "module": "Virtual Inventory Setup",
+            "url": "/virtual-inventory/setup"
+        },
+        {
+            "module": "Virtual Stock Inventory",
+            "url": "/virtual-inventory/stock"
+        }
+    ],
+    "Agent Management": [
+        {
+            "module": "Agent",
+            "url": "/agent-management/agent"
+        },
+        {
+            "module": "Branch",
+            "url": "/agent-management/branch"
+        },
+        {
+            "module": "Merchant(Direct API)",
+            "url": "/agent-management/merchant"
+        }
+    ],
+    "Duitnow": [
+        {
+            "module": "Eligibility",
+            "url": "/duitnow/eligibility"
+        },
+        {
+            "module": "Global Account Transfer Limit",
+            "url": "/duitnow/global-account-transfer-limit/duitnow-transfer-proxy-global-limit"
+        }
+    ],
+    "Device Management": [
+        {
+            "module": "Setting",
+            "url": "/device/setting"
+        },
+        {
+            "module": "White list",
+            "url": "/device/white-list"
+        },
+        {
+            "module": "Locked Account",
+            "url": "/device/locked"
+        },
+        {
+            "module": "Block Mobile/Device",
+            "url": "/device/block"
+        },
+        {
+            "module": "User Login Record",
+            "url": "/device/user-login-record"
+        },
+        {
+            "module": "Pending List",
+            "url": "/device/pendinglist"
+        }
+    ],
+    "Merchant Management": [
+        {
+            "module": "Merchant Voucher Image",
+            "url": "/merchant-management/merchant-voucher-image"
+        },
+        {
+            "module": "Merchant Account Topup",
+            "url": "/merchant-management/merchant-account-topup"
+        },
+        {
+            "module": "Merchant Detail",
+            "url": "/merchant-management/merchant-detail"
+        },
+        {
+            "module": "Pending Transaction",
+            "url": "/merchant-management/pending-transaction"
+        },
+        {
+            "module": "Last 7 days Transaction",
+            "url": "/merchant-management/seven-days-transaction"
+        }
+    ],
+    "Rate Management": [
+        {
+            "module": "Set Rate",
+            "url": "/rate-management/set"
+        },
+        {
+            "module": "Approve Rate",
+            "url": "/rate-management/approve"
+        }
+    ]
+}

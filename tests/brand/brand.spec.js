@@ -10,9 +10,11 @@ let accessToken, interceptId;
 test.beforeEach(async ({ page }) => {
     await requestResponseListeners(page);
     const login = new LoginPage(page);
+    const brand = new BrandPage(page);
     await page.goto('/');
     await login.login(testData.validUser.userName, testData.validUser.password);
     await login.verifyValidLogin();
+    await brand.selectModule();
 })
 
 test.describe('Brand testcases', () => {

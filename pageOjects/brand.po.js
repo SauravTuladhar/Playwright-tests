@@ -5,6 +5,7 @@ exports.BrandPage = class BrandPage {
     constructor(page) {
         this.page = page;
         this.brandSubMenu = '(//div[contains(text(),"Brand")])[1]';
+        this.setupModule = '//div[contains(text(),"Setup")]';
         this.brandSearchField = '//input[@placeholder="Search ..."]';
         this.brandSearchButton = '//button[contains(text(),"Search")]';
         this.brandSearchBlistValidation = '(//div[contains(text(),"Brand")])[2]//following::span[2]';
@@ -20,6 +21,10 @@ exports.BrandPage = class BrandPage {
         this.deleteBrand = '//span[contains(text(),"Test brand delete")]//following::button[1]'; 
         this.confirmDelete = '//button[contains(text(),"Confirm")]';
 
+    }
+
+    async selectModule() {
+        await this.page.locator(this.setupModule).click();
     }
 
     async brandSearch(brandSearch, brandSearchValidation) {
